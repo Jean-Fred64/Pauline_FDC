@@ -28,11 +28,9 @@ rename a folder
 ```
 mv /www2 /www
 ```
-<<<<<<< HEAD
-Just copy `dump.html` & `pauline.js`  
-=======
+
 ## Just copy `dump.html` & `pauline.js`  
->>>>>>> b301395e4b43622d87a06dfd008342f6d432d4f6
+
 ```
 cp /home/pauline/www5/dump.html /www
 ```
