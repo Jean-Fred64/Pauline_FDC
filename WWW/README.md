@@ -1,6 +1,6 @@
 # Pauline FDC
 
-## Ressources pour une nouvelle interface
+## Ressources GUI
 
 **WIP** 
 
