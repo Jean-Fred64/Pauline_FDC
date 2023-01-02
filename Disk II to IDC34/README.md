@@ -4,6 +4,7 @@
 
 Connect Pauline to Apple II DISK II and Mac Drive  
 
+![DISKIItoIDC34](https://github.com/Jean-Fred64/Pauline_FDC/blob/main/Disk%20II%20to%20IDC34/IMG/Disk_II_to_IDC34_v3_jumper_setting.png)
 
 ## Documentation Pauline  
   
