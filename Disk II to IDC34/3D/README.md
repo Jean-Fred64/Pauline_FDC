@@ -4,6 +4,12 @@
 
 Connect Pauline to Apple II DISK II and Mac Drive  
 
+### Altomare (France)
+[![Alto](https://github.com/Jean-Fred64/Pauline_FDC/blob/main/Disk%20II%20to%20IDC34/IMG/Altomare%2005%232022%20PROD.jpg)](https://www.thingiverse.com/altomare3/designs)
+
+[**STL files**](https://www.thingiverse.com/altomare3/designs)    
+
+
 ## Documentation Pauline  
   
 ![FR](https://raw.githubusercontent.com/stevenrskelton/flag-icon/master/png/16/country-4x3/fr.png)  [Documentation Pauline FR](https://wernli.pages.in2p3.fr/pauline-doc/fr/)  
