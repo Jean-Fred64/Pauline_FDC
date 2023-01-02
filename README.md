@@ -1,4 +1,4 @@
-# *Pauline* **F**loppy **D**isk **C**ontroler
+# *Pauline* **F**loppy **D**isk **C**ontroler :floppy_disk:
 
 ## Documentation Pauline  
   
