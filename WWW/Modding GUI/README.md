@@ -7,7 +7,7 @@ mount -o remount,rw /
 
 Archiver le dossier www  
 ```
-cp -avr /www /home/pauline/www4/
+cp -avr /www /home/pauline/www_original/
 ```
 
 Copier un dossier  
@@ -24,7 +24,7 @@ renommer un dossier
 ```
 mv /www2 /www
 ```
-Copier juste dump.html & pauline.js  
+## Just copy `dump.html` & `pauline.js`  
 ```
 cp /home/pauline/www5/dump.html /www
 ```
