@@ -1,4 +1,4 @@
-# Pauline FDC
+# Pauline Floppy Disk Controler
 
 ## Documentation Pauline  
   
