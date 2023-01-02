@@ -1,4 +1,4 @@
-# Pauline FDC
+# *Pauline* **F**loppy **D**isk **C**ontroler
 
 ## Documentation Pauline  
   
