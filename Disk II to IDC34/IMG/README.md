@@ -1,5 +1,10 @@
 # *Pauline* **F**loppy **D**isk **C**ontroler
 
+
+## Disk II to IDC34 IMG Files
+
+Connect Pauline to Apple II DISK II and Mac Drive  
+
 ## Documentation Pauline  
   
 ![FR](https://raw.githubusercontent.com/stevenrskelton/flag-icon/master/png/16/country-4x3/fr.png)  [Documentation Pauline FR](https://wernli.pages.in2p3.fr/pauline-doc/fr/)  
