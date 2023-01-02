@@ -1,6 +1,6 @@
 # *Pauline* **F**loppy **D**isk **C**ontroler
 
-## Disk II to IDC34 3D Files
+## Disk II to IDC34 **3D Files**
 
 Connect Pauline to Apple II DISK II and Mac Drive  
 
