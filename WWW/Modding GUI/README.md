@@ -1,30 +1,34 @@
 # Modding GUI
 
-Pour modifier le dossier www  
+Adding **DRIVE CONTROL**  
+
+## Linux command
+
+To modify folder www  
 ```
 mount -o remount,rw /
 ```
 
-Archiver le dossier www  
+Archive folder www  
 ```
 cp -avr /www /home/pauline/www4/
 ```
 
-Copier un dossier  
+Copy a folder  
 ```
 cp -avr /home/pauline/www2/ /
 ```
 
-effacer un dossier et ses fichiers  
+Delete a folder and files  
 ```
 rm -rf www/
 ```
 
-renommer un dossier  
+rename a folder  
 ```
 mv /www2 /www
 ```
-Copier juste dump.html & pauline.js  
+Just copy `dump.html` & `pauline.js`  
 ```
 cp /home/pauline/www5/dump.html /www
 ```
