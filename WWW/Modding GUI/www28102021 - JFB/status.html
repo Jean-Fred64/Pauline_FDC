@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="fr">
+
+	<head>
+		<link rel="stylesheet" type="text/css" href="style.css">
+		<title>Pauline Status page</title>
+		<link rel="shortcut icon" href="pofasm.ico" type="image/x-icon">
+		<link rel="icon" href="pofasm.ico" type="image/x-icon">
+		<meta name="description" content="Pauline control page">
+		<meta name="keywords" content="Pauline, floppy, dump, emulator">
+		<meta http-equiv="content-Type" content="text/html; charset=utf-8">
+		<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+		<meta http-equiv="Pragma" content="no-cache">
+		<meta http-equiv="Expires" content="0">
+		<meta name="Author" content="HxC2001 Tech">
+		<meta name="Owner" content="HxC2001 Tech">
+		<meta name="Language" content="FR">
+		<meta name="Identifier-url" content="http://hxc2001.free.fr">
+		<meta name="dc.language" content="fr">
+		<meta name="robots" content="index, follow">
+		<meta name="viewport" content="width=device-width, initial-scale=0.6">
+		<script type="text/javascript" src="pauline.js"></script>
+	</head>
+
+	<body onload="PaulineConnection()">
+		<table class="topmenu">
+			<tbody>
+				<tr>
+					<td>
+						<table class="topmenu_menu">
+							<tbody>
+								<tr>
+									<td><img alt="" src="img/separat.gif"></td>
+									<td><a href="index.html">Home</a></td>
+									<td><img alt="" src="img/separat.gif"></td>
+									<td><a href="status.html"><i>Status</i></a></td>
+									<td><img alt="" src="img/separat.gif"></td>
+									<td><a href="config.html">Configuration</a></td>
+									<td><img alt="" src="img/separat.gif"></td>
+									<td><a href="dump.html">Floppy disks dump</a></td>
+									<td><img alt="" src="img/separat.gif"></td>
+									<td><a href="simulator.html">Drives simulator</a></td>
+									<td><img alt="" src="img/separat.gif"></td>
+									<td><a href="contacts.html" target="_blank">Contacts</a></td>
+									<td><img alt="" src="img/separat.gif"></td>
+								</tr>
+							</tbody>
+						</table>
+					</td>
+				</tr>
+			</tbody>
+		</table>
+
+		<div class="hxc2001">
+			<b><u>Under construction</u></b><br>
+
+			<br>
+			<img class="mediacenter" alt="" src="img/under_construction.jpg">
+			<br>
+
+			<b>Services enabled :</b><br>
+			<br>
+			- HTTP<br>
+			- SSH (Login/pwd : pauline/pauline, Login/pwd : root/root)<br>
+			- FTP (Login/pwd : pauline/pauline, Login/pwd : root/root)<br>
+			- Samba / Windows shares (Login/pwd : pauline/pauline)<br>
+			<br>
+
+			<div id="header">
+				<!-- Server: <input type="text" id="txtServer" value="ws://127.1.0.1:8080"> -->
+				<!-- <input type="button" id="btConn" name="btConn" value="Connect!"><br /><br /> -->
+
+				Command : <input type="text" id="txtMsg" value="">
+				<input type="button" id="btMsg" name="btMsg" value="Send"><br /><br />
+
+				<textarea rows="30" cols="70" id="taLog" name="taLog"></textarea><br /><br />
+				<input type="button" id="btReboot" name="btReboot" value="Reboot"> <input type="button" id="btHalt" name="btHalt" value="Halt"><br /><br />
+			</div>
+
+		</div>
+
+		<hr>
+		<p class="rightalign">(C) 2021</p>
+
+	</body>
+
+</html>
+
