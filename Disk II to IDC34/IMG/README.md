@@ -5,6 +5,14 @@
 
 Connect Pauline to Apple II DISK II and Mac Drive  
 
+**Some production**  
+
+### GPS (Japan) [Twitter](https://twitter.com/odilon_japon/status/1457162193615478796)
+[![TwitterGPS](https://github.com/Jean-Fred64/Pauline_FDC/blob/main/Disk%20II%20to%20IDC34/IMG/Joseph%20REDON%20sur%20Twitter.png)](https://twitter.com/odilon_japon/status/1457162193615478796)
+
+### Altomare (France)
+![Alto](https://github.com/Jean-Fred64/Pauline_FDC/blob/main/Disk%20II%20to%20IDC34/IMG/Altomare%2005%232022%20PROD.jpg)
+
 ## Documentation Pauline  
   
 ![FR](https://raw.githubusercontent.com/stevenrskelton/flag-icon/master/png/16/country-4x3/fr.png)  [Documentation Pauline FR](https://wernli.pages.in2p3.fr/pauline-doc/fr/)  
