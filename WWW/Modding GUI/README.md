@@ -32,15 +32,8 @@ mv /www2 /www
 ## Just copy `dump.html` & `pauline.js`  
 
 ```
-cp /home/pauline/www5/dump.html /www
+cp /home/pauline/www_modGUI/dump.html /www
 ```
 ```
-cp /home/pauline/www5/pauline.js /www
-```
-
-```
-cp /home/pauline/www5/dump_jeanfred.html /www
-```
-```
-cp /home/pauline/www5/pauline_jeanfred.js /www
-```
+cp /home/pauline/www_MODGUI/pauline.js /www
+```  
