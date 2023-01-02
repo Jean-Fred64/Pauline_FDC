@@ -1,8 +1,10 @@
 # Pauline FDC
 
-## Ressources GUI
+## Ressources for new GUI
 
 **WIP** 
+
+*STOP 06/02/2021*  
   
 ![FR](https://raw.githubusercontent.com/stevenrskelton/flag-icon/master/png/16/country-4x3/fr.png)  [Documentation Pauline FR](https://wernli.pages.in2p3.fr/pauline-doc/fr/)  
   
