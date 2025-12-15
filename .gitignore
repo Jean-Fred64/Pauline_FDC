@@ -1,0 +1,59 @@
+# Fichiers compilés et objets
+*.o
+*.a
+*.so
+*.exe
+*.bin
+*.elf
+*.map
+obj/
+build/
+*.backup
+*.current
+
+# Fichiers de compilation
+*.d
+*.depend
+*.su
+*.idb
+*.pdb
+
+# Fichiers temporaires
+*.tmp
+*.temp
+*.swp
+*.swo
+*~
+.DS_Store
+Thumbs.db
+
+# Logs et diagnostics
+*.log
+diagnose_*.log
+www_backups/
+
+# Fichiers de configuration locaux
+*.local
+.env
+
+# Fichiers de sauvegarde
+*.backup.*
+*.current.*
+
+# Fichiers de cache
+.cache/
+*.cache
+
+# Fichiers IDE
+.vscode/
+.idea/
+*.code-workspace
+.cursor/
+
+# Fichiers de déploiement temporaires
+foo.map
+
+# Fichiers de test
+test_*
+*_test
+

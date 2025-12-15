@@ -32,6 +32,7 @@
 #include <fcntl.h>
 #include <sys/mman.h>
 #include <unistd.h>
+#include <time.h>
 
 #include <stdint.h>
 
@@ -232,15 +233,188 @@ unsigned short * load_stream_hfe(fpga_state * state,int drive, char * imgfile, i
 		else
 			state->regs->drive_config[drive] &= ~CFG_DISK_DOUBLE_STEP;
 
+		free(trackoffsetlist);
+		fclose(f);
+		return (unsigned short*)1; // Success
 	}
 	else
 	{
 		printf("Invalid header ! (%s)\n",imgfile);
+		fclose(f);
 		return NULL;
 	}
 
 error:
+	if(trackoffsetlist)
+		free(trackoffsetlist);
+	if(f)
+		fclose(f);
 	return NULL;
+}
+
+// Vérifie si un fichier est au format HXC_STREAMHFE
+int is_streamhfe_format(const char *filename)
+{
+	FILE *f;
+	streamhfe_fileheader header;
+	int is_valid = 0;
+	
+	if (!filename)
+		return 0;
+	
+	f = fopen(filename, "rb");
+	if (!f)
+		return 0;
+	
+	if (fread(&header, sizeof(header), 1, f) == 1)
+	{
+		if (!strncmp((char*)header.signature, "HxC_Stream_Image", 16))
+		{
+			is_valid = 1;
+		}
+	}
+	
+	fclose(f);
+	return is_valid;
+}
+
+// Convertit un fichier image vers le format HXC_STREAMHFE
+int convert_to_streamhfe(HXCFE* hxcfe, const char *infile, const char *outfile)
+{
+	int loaderid;
+	int ret;
+	HXCFE_FLOPPY *floppydisk;
+	HXCFE_IMGLDR *imgldr_ctx;
+	
+	if (!hxcfe)
+	{
+		printf("Error: libhxcfe not initialized\n");
+		return -1;
+	}
+	
+	if (!infile || !outfile)
+	{
+		printf("Error: Invalid file parameters\n");
+		return -1;
+	}
+	
+	imgldr_ctx = hxcfe_imgInitLoader(hxcfe);
+	if (!imgldr_ctx)
+	{
+		printf("Error: Cannot initialize image loader\n");
+		return -1;
+	}
+	
+	// Détection automatique du format d'entrée
+	loaderid = hxcfe_imgAutoSetectLoader(imgldr_ctx, infile, 0);
+	if (loaderid < 0)
+	{
+		printf("Error: Cannot detect input file format: %s\n", infile);
+		hxcfe_imgDeInitLoader(imgldr_ctx);
+		return -1;
+	}
+	
+	// Chargement du fichier
+	floppydisk = hxcfe_imgLoad(imgldr_ctx, infile, loaderid, &ret);
+	if (ret != HXCFE_NOERROR || !floppydisk)
+	{
+		printf("Error: Cannot load image file: %s (error: %d)\n", infile, ret);
+		hxcfe_imgDeInitLoader(imgldr_ctx);
+		return -1;
+	}
+	
+	// Conversion vers HXC_STREAMHFE
+	loaderid = hxcfe_imgGetLoaderID(imgldr_ctx, "HXC_STREAMHFE");
+	if (loaderid < 0)
+	{
+		printf("Error: HXC_STREAMHFE loader not available\n");
+		hxcfe_imgUnload(imgldr_ctx, floppydisk);
+		hxcfe_imgDeInitLoader(imgldr_ctx);
+		return -1;
+	}
+	
+	// Export vers le format HXC_STREAMHFE
+	ret = hxcfe_imgExport(imgldr_ctx, floppydisk, outfile, loaderid);
+	if (ret != HXCFE_NOERROR)
+	{
+		printf("Error: Cannot export to HXC_STREAMHFE format: %s (error: %d)\n", outfile, ret);
+		hxcfe_imgUnload(imgldr_ctx, floppydisk);
+		hxcfe_imgDeInitLoader(imgldr_ctx);
+		return -1;
+	}
+	
+	hxcfe_imgUnload(imgldr_ctx, floppydisk);
+	hxcfe_imgDeInitLoader(imgldr_ctx);
+	
+	printf("Successfully converted %s to %s (HXC_STREAMHFE format)\n", infile, outfile);
+	return 0;
+}
+
+// Charge un fichier image avec conversion automatique si nécessaire
+unsigned short * load_stream_hfe_with_conversion(fpga_state * state, int drive, 
+                                                  char * imgfile, int * tracksize, 
+                                                  int * numberoftracks, int double_step)
+{
+	char temp_file[512];
+	unsigned short *result = NULL;
+	
+	if (!state)
+	{
+		printf("Error: Invalid state\n");
+		return NULL;
+	}
+	
+	if (!imgfile)
+	{
+		printf("Error: Invalid filename\n");
+		return NULL;
+	}
+	
+	// Vérifier si le fichier est déjà au format HXC_STREAMHFE
+	if (is_streamhfe_format(imgfile))
+	{
+		// Charger directement
+		return load_stream_hfe(state, drive, imgfile, tracksize, numberoftracks, double_step);
+	}
+	
+	// Le fichier n'est pas au format HXC_STREAMHFE, il faut le convertir
+	printf("File %s is not in HXC_STREAMHFE format. Converting...\n", imgfile);
+	
+	if (!state->libhxcfe)
+	{
+		printf("Error: libhxcfe not initialized, cannot convert file\n");
+		return NULL;
+	}
+	
+	// Créer un nom de fichier temporaire pour la conversion
+	snprintf(temp_file, sizeof(temp_file), "/tmp/pauline_convert_%d_%ld.hfe", 
+	         drive, (long)time(NULL));
+	
+	// Convertir vers HXC_STREAMHFE
+	if (convert_to_streamhfe(state->libhxcfe, imgfile, temp_file) != 0)
+	{
+		printf("Error: Conversion failed for %s\n", imgfile);
+		return NULL;
+	}
+	
+	// Charger le fichier converti
+	result = load_stream_hfe(state, drive, temp_file, tracksize, numberoftracks, double_step);
+	
+	if (result)
+	{
+		printf("Successfully loaded converted file: %s\n", temp_file);
+		// Optionnel : supprimer le fichier temporaire après chargement réussi
+		// Note: On garde le fichier temporaire pour debug, mais on pourrait le supprimer
+		// unlink(temp_file);
+	}
+	else
+	{
+		printf("Error: Failed to load converted file: %s\n", temp_file);
+		// Supprimer le fichier temporaire en cas d'erreur
+		unlink(temp_file);
+	}
+	
+	return result;
 }
 
 // 0XXXXXXX  < 128

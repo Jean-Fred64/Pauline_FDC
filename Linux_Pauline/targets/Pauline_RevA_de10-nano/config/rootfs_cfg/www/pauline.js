@@ -59,12 +59,56 @@ function doConnect(addr,addr2)
 	/* Deals with messages. */
 	ws.onmessage = function (evt)
 	{
-		document.getElementById("taLog").value += ("Recv: " + evt.data + "\n");
+		var message = evt.data;
+		document.getElementById("taLog").value += ("Recv: " + message + "\n");
+		
+		// Gérer le chargement du fichier drives.script
+		if (typeof window.drivesScriptLoading !== 'undefined' && window.drivesScriptLoading) {
+			var drivesScriptContentEl = document.getElementById("drives-script-content");
+			if (drivesScriptContentEl) {
+				// Initialiser le buffer si nécessaire
+				if (typeof window.drivesScriptBuffer === 'undefined') {
+					window.drivesScriptBuffer = '';
+				}
+				
+				// Ajouter le message au buffer
+				// Le message peut contenir plusieurs lignes, on les ajoute telles quelles
+				window.drivesScriptBuffer += message;
+				
+				// Mettre à jour le textarea avec le contenu accumulé
+				drivesScriptContentEl.value = window.drivesScriptBuffer;
+				
+				// Réinitialiser le timer de fin de chargement
+				if (window.drivesScriptTimeout) {
+					clearTimeout(window.drivesScriptTimeout);
+				}
+				
+				// Si on n'a pas reçu de message depuis 500ms, on considère que le chargement est terminé
+				window.drivesScriptTimeout = setTimeout(function() {
+					if (window.drivesScriptLoading) {
+						window.drivesScriptLoading = false;
+						// Analyser le fichier chargé et mettre à jour la console si la fonction existe
+						if (typeof parseDrivesScript === 'function' && window.drivesScriptBuffer && window.drivesScriptBuffer.trim() !== '') {
+							parseDrivesScript(window.drivesScriptBuffer);
+						}
+						// Nettoyer le buffer après un court délai
+						setTimeout(function() {
+							window.drivesScriptBuffer = '';
+						}, 2000);
+					}
+				}, 500);
+			}
+		}
 	};
 
 	ws.onclose = function()
 	{
 		document.getElementById("taLog").value += ("Connection closed\n");
+	};
+	
+	ws.onerror = function(error)
+	{
+		document.getElementById("taLog").value += ("Connection error\n");
 	};
 
 	/* Do connection. */
@@ -230,11 +274,26 @@ document.addEventListener("DOMContentLoaded", function(event)
 	{
 		element.onclick = function()
 		{
+			if (!confirm('Are you sure you want to reboot the DE10?\n\nThis action will interrupt all ongoing operations.')) {
+				return;
+			}
+			
+			// Vérifier que la connexion WebSocket est établie
+			if (typeof ws === 'undefined' || !ws || ws.readyState !== WebSocket.OPEN) {
+				alert('WebSocket connection not established. Please wait for connection.');
+				return;
+			}
+			
 			var txt = "system reboot\n";
-			var log = document.getElementById("taLog").value;
-
 			ws.send(txt);
-			document.getElementById("taLog").value += ("Send: " + txt + "\n");
+			
+			// Écrire dans taLog si l'élément existe
+			var taLog = document.getElementById("taLog");
+			if (taLog) {
+				taLog.value += ("Send: " + txt + "\n");
+			}
+			
+			alert('Reboot command sent. The DE10 will reboot in a few moments.');
 		};
 	};
 
@@ -321,6 +380,260 @@ document.addEventListener("DOMContentLoaded", function(event)
 		};
 	};
 
+	var element = document.getElementById("btCLEANDISKII");
+	if( element )
+	{
+		element.onclick = function()
+		{
+			var log = document.getElementById("taLog").value;
+			var txt = "movehead"  + " " + document.getElementById("drives-select").value.toString() 
+			                      + " " + "35"
+			                      + " " + (document.getElementById("ckbDOUBLESTEP").checked + 0).toString()
+			                      + "\n";
+			
+			//alert(txt);
+			ws.send(txt);
+
+			document.getElementById("taLog").value += ("Send: " + txt + "\n");
+			var log = document.getElementById("taLog").value;
+			var txt = "movehead"  + " " + document.getElementById("drives-select").value.toString() 
+			                      + " " + "0"
+			                      + " " + (document.getElementById("ckbDOUBLESTEP").checked + 0).toString()
+			                      + "\n";
+			
+			//alert(txt);
+			ws.send(txt);
+
+			document.getElementById("taLog").value += ("Send: " + txt + "\n");
+			var log = document.getElementById("taLog").value;
+			var txt = "movehead"  + " " + document.getElementById("drives-select").value.toString() 
+			                      + " " + "35"
+			                      + " " + (document.getElementById("ckbDOUBLESTEP").checked + 0).toString()
+			                      + "\n";
+			
+			//alert(txt);
+			ws.send(txt);
+
+			document.getElementById("taLog").value += ("Send: " + txt + "\n");
+			var log = document.getElementById("taLog").value;
+			var txt = "movehead"  + " " + document.getElementById("drives-select").value.toString() 
+			                      + " " + "0"
+			                      + " " + (document.getElementById("ckbDOUBLESTEP").checked + 0).toString()
+			                      + "\n";
+			
+			//alert(txt);
+			ws.send(txt);
+
+			document.getElementById("taLog").value += ("Send: " + txt + "\n");
+		};
+	};
+
+	var element = document.getElementById("btCLEANPC");
+	if( element )
+	{
+		element.onclick = function()
+		{
+			var log = document.getElementById("taLog").value;
+			var txt = "movehead"  + " " + document.getElementById("drives-select").value.toString() 
+			                      + " " + "82"
+			                      + " " + (document.getElementById("ckbDOUBLESTEP").checked + 0).toString()
+			                      + "\n";
+			
+			//alert(txt);
+			ws.send(txt);
+
+			document.getElementById("taLog").value += ("Send: " + txt + "\n");
+			var log = document.getElementById("taLog").value;
+			var txt = "movehead"  + " " + document.getElementById("drives-select").value.toString() 
+			                      + " " + "0"
+			                      + " " + (document.getElementById("ckbDOUBLESTEP").checked + 0).toString()
+			                      + "\n";
+			
+			//alert(txt);
+			ws.send(txt);
+
+			document.getElementById("taLog").value += ("Send: " + txt + "\n");
+			var log = document.getElementById("taLog").value;
+			var txt = "movehead"  + " " + document.getElementById("drives-select").value.toString() 
+			                      + " " + "82"
+			                      + " " + (document.getElementById("ckbDOUBLESTEP").checked + 0).toString()
+			                      + "\n";
+			
+			//alert(txt);
+			ws.send(txt);
+
+			document.getElementById("taLog").value += ("Send: " + txt + "\n");
+			var log = document.getElementById("taLog").value;
+			var txt = "movehead"  + " " + document.getElementById("drives-select").value.toString() 
+			                      + " " + "0"
+			                      + " " + (document.getElementById("ckbDOUBLESTEP").checked + 0).toString()
+			                      + "\n";
+			
+			//alert(txt);
+			ws.send(txt);
+
+			document.getElementById("taLog").value += ("Send: " + txt + "\n");
+		};
+	};
+
+	var element = document.getElementById("btautodetect");
+	if( element )
+	{
+		element.onclick = function()
+		{
+			var log = document.getElementById("taLog").value;
+			
+			// Version simplifiée : la commande system utilise maintenant popen()
+			// et envoie automatiquement la sortie en temps réel via WebSocket
+			// 2>&1 redirige stderr vers stdout pour capturer aussi les erreurs
+			var txt = "system pauline -autodetect 2>&1\n";
+
+			//alert(txt);
+			ws.send(txt);
+
+			document.getElementById("taLog").value += ("Send: " + txt + "\n");
+		};
+	};
+
+	var element = document.getElementById("btTestMaxTrack");
+	if( element )
+	{
+		element.onclick = function()
+		{
+			var log = document.getElementById("taLog").value;
+			var drive = document.getElementById("drives-select").value.toString();
+			
+			// Version simplifiée : la commande system utilise maintenant popen()
+			// et envoie automatiquement la sortie en temps réel via WebSocket
+			// 2>&1 redirige stderr vers stdout pour capturer aussi les erreurs
+			var txt = "system pauline -testmaxtrack -drive " + drive + " 2>&1\n";
+
+			//alert(txt);
+			ws.send(txt);
+
+			document.getElementById("taLog").value += ("Send: " + txt + "\n");
+		};
+	};
+
+	var element = document.getElementById("btONPIN16");
+	if( element )
+	{
+		element.onclick = function()
+		{
+			var log = document.getElementById("taLog").value;
+			var txt = "setio DRIVES_PORT_PIN16";
+
+			//alert(txt);
+			ws.send(txt);
+
+			document.getElementById("taLog").value += ("Send: " + txt + "\n");
+		};
+	};
+
+	var element = document.getElementById("btOFFPIN16");
+	if( element )
+	{
+		element.onclick = function()
+		{
+			var log = document.getElementById("taLog").value;
+			var txt = "cleario DRIVES_PORT_PIN16";
+
+			//alert(txt);
+			ws.send(txt);
+
+			document.getElementById("taLog").value += ("Send: " + txt + "\n");
+		};
+	};
+
+	var element = document.getElementById("btONPIN10");
+	if( element )
+	{
+		element.onclick = function()
+		{
+			var log = document.getElementById("taLog").value;
+			var txt = "setio DRIVES_PORT_PIN10";
+
+			//alert(txt);
+			ws.send(txt);
+
+			document.getElementById("taLog").value += ("Send: " + txt + "\n");
+		};
+	};
+
+	var element = document.getElementById("btOFFPIN10");
+	if( element )
+	{
+		element.onclick = function()
+		{
+			var log = document.getElementById("taLog").value;
+			var txt = "cleario DRIVES_PORT_PIN10";
+
+			//alert(txt);
+			ws.send(txt);
+
+			document.getElementById("taLog").value += ("Send: " + txt + "\n");
+		};
+	};
+
+	var element = document.getElementById("btONPIN14");
+	if( element )
+	{
+		element.onclick = function()
+		{
+			var log = document.getElementById("taLog").value;
+			var txt = "setio DRIVES_PORT_PIN14";
+
+			//alert(txt);
+			ws.send(txt);
+
+			document.getElementById("taLog").value += ("Send: " + txt + "\n");
+		};
+	};
+
+	var element = document.getElementById("btOFFPIN14");
+	if( element )
+	{
+		element.onclick = function()
+		{
+			var log = document.getElementById("taLog").value;
+			var txt = "cleario DRIVES_PORT_PIN14";
+
+			//alert(txt);
+			ws.send(txt);
+
+			document.getElementById("taLog").value += ("Send: " + txt + "\n");
+		};
+	};
+
+	var element = document.getElementById("btONPIN12");
+	if( element )
+	{
+		element.onclick = function()
+		{
+			var log = document.getElementById("taLog").value;
+			var txt = "setio DRIVES_PORT_PIN12";
+
+			//alert(txt);
+			ws.send(txt);
+
+			document.getElementById("taLog").value += ("Send: " + txt + "\n");
+		};
+	};
+
+	var element = document.getElementById("btOFFPIN12");
+	if( element )
+	{
+		element.onclick = function()
+		{
+			var log = document.getElementById("taLog").value;
+			var txt = "cleario DRIVES_PORT_PIN12";
+
+			//alert(txt);
+			ws.send(txt);
+
+			document.getElementById("taLog").value += ("Send: " + txt + "\n");
+		};
+	};
 	var element = document.getElementById("btStop");
 	if( element )
 	{
@@ -374,48 +687,17 @@ document.addEventListener("DOMContentLoaded", function(event)
 		};
 	};
 
-	var element = document.getElementById("ckbMACMFMMode");
-	if( element )
-	{
-		element.onclick = function()
-		{
-			var log = document.getElementById("taLog").value;
-
-			if( document.getElementById("ckbMACMFMMode").checked )
-			{
-				var txt = "set MACINTOSH_GCR_MODE 1\n";
-			}
-			else
-			{
-				var txt = "set MACINTOSH_GCR_MODE 0\n";
-			}
-
-			//alert(txt);
-			ws.send(txt);
-
-			document.getElementById("taLog").value += ("Send: " + txt + "\n");
-		};
-	};
-
 	var element = document.getElementById("btReadTrack");
 	if( element )
 	{
 		element.onclick = function()
 		{
+			// Validation du profil archiviste
+			if (typeof validateDumpForm === 'function' && !validateDumpForm()) {
+				return;
+			}
+			
 			var log = document.getElementById("taLog").value;
-
-			if( document.getElementById("ckbMACMFMMode").checked )
-			{
-				var txt = "set MACINTOSH_GCR_MODE 1\n";
-			}
-			else
-			{
-				var txt = "set MACINTOSH_GCR_MODE 0\n";
-			}
-
-			ws.send(txt);
-			document.getElementById("taLog").value += ("Send: " + txt + "\n");
-
 			var txt = "index_to_dump" + " " + document.getElementById("txtIndexToDumpDelay").value.toString()
 									  + "\n";
 
@@ -628,20 +910,12 @@ document.addEventListener("DOMContentLoaded", function(event)
 	{
 		element.onclick = function()
 		{
+			// Validation du profil archiviste
+			if (typeof validateDumpForm === 'function' && !validateDumpForm()) {
+				return;
+			}
+			
 			var log = document.getElementById("taLog").value;
-
-			if( document.getElementById("ckbMACMFMMode").checked )
-			{
-				var txt = "set MACINTOSH_GCR_MODE 1\n";
-			}
-			else
-			{
-				var txt = "set MACINTOSH_GCR_MODE 0\n";
-			}
-
-			ws.send(txt);
-			document.getElementById("taLog").value += ("Send: " + txt + "\n");
-
 			var txt = "index_to_dump" + " " + document.getElementById("txtIndexToDumpDelay").value.toString()
 									  + "\n";
 

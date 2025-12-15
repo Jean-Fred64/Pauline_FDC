@@ -440,7 +440,7 @@ int main(int argc, char* argv[])
 	home_folder[0] = '\0';
 
 	printf("HxC Floppy Emulator : Pauline floppy drive simulator / floppy drive dumper control software v"STR_FILE_VERSION2"\n");
-	printf("Copyright (C) 2006-2023 Jean-Francois DEL NERO\n");
+	printf("Copyright (C) 2006-2025 Jean-Francois DEL NERO & Jean-Fred64\n");
 	printf("This program comes with ABSOLUTELY NO WARRANTY\n");
 	printf("This is free software, and you are welcome to redistribute it\n");
 	printf("under certain conditions;\n\n");
@@ -518,7 +518,7 @@ int main(int argc, char* argv[])
 
 		for(;;)
 			sleep(1);
-	}
+		}
 
 	fpga = init_fpga();
 	if(!fpga)

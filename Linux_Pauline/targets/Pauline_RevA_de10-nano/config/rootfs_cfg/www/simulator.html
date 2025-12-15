@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="fr">
+<html lang="en">
 
 	<head>
 		<link rel="stylesheet" type="text/css" href="style.css">
@@ -14,11 +14,12 @@
 		<meta http-equiv="Expires" content="0">
 		<meta name="Author" content="HxC2001 Tech">
 		<meta name="Owner" content="HxC2001 Tech">
-		<meta name="Language" content="FR">
+		<meta name="Language" content="EN">
 		<meta name="Identifier-url" content="http://hxc2001.free.fr">
-		<meta name="dc.language" content="fr">
+		<meta name="dc.language" content="en">
 		<meta name="robots" content="index, follow">
 		<meta name="viewport" content="width=device-width, initial-scale=0.6">
+		<script type="text/javascript" src="profile.js"></script>
 		<script type="text/javascript" src="pauline.js"></script>
 	</head>
 
@@ -43,6 +44,7 @@
 									<td><img alt="" src="img/separat.gif"></td>
 									<td><a href="contacts.html" target="_blank">Contacts</a></td>
 									<td><img alt="" src="img/separat.gif"></td>
+									<td><span id="profile-indicator" class="profile-indicator"></span></td>
 								</tr>
 							</tbody>
 						</table>
@@ -52,32 +54,476 @@
 		</table>
 
 		<div class="hxc2001">
-			<b><u>Under construction</u></b><br>
+			<h1>Drives Simulator</h1>
 
-			<br>
-			<img class="mediacenter" alt="" src="img/under_construction.jpg">
-			<br>
+			<div class="card">
+				<h2>Floppy disk image loading</h2>
+				<div id="cable-warning" style="background-color: #fff3cd; border: 1px solid #ffc107; border-radius: 4px; padding: 12px; margin-bottom: 15px; transition: opacity 0.5s ease-out;">
+					<p style="margin: 0; font-size: 13px; color: #856404;">
+						<strong>⚠️ Important:</strong> Before starting the simulation, make sure the ribbon cable is properly connected to the <strong>HOST connector</strong> on the DE10-nano board.
+					</p>
+				</div>
+				<div id="drop-zone" class="drop-zone">
+					<p><strong>Drag and drop an image file here</strong></p>
+					<p>or</p>
+					<p><input type="file" id="file-input" accept=".hfe,.img,.ima,.dsk,.adf,.st,.msa,.adz,.ipf,.scp,.raw,.hxc" style="display:none;" onchange="handleFileSelect(this.files)">
+					<label for="file-input" style="cursor:pointer; text-decoration:underline; color:#436976;">Click to select a file</label></p>
+					<p id="file-info" style="margin-top:10px; font-size:12px; color:#666;"></p>
+					<p style="margin-top:10px; font-size:11px; color:#888; font-style:italic;">
+						<strong>Note:</strong> Supported formats: .hfe (HXC_STREAMHFE), .img, .ima, .dsk, .adf, .st, .msa, .adz, .ipf, .scp, .raw<br>
+						Files will be automatically converted to HXC_STREAMHFE format if needed.<br>
+						<strong>Important:</strong> The file must first be uploaded to the DE10-nano via Samba/FTP to:<br>
+						<code>/home/pauline/Drives_Simulation/</code>
+					</p>
+				</div>
+			</div>
 
-			<b>Services enabled :</b><br>
-			<br>
-			- HTTP<br>
-			- SSH (Login/pwd : pauline/pauline, Login/pwd : root/root)<br>
-			- FTP (Login/pwd : pauline/pauline, Login/pwd : root/root)<br>
-			- Samba / Windows shares (Login/pwd : pauline/pauline)<br>
-			<br>
+			<div class="card">
+				<h2>Simulation profiles</h2>
+				<p>
+					<label for="sim-profile-select">Select a profile:</label>
+					<select id="sim-profile-select" onchange="applySimProfile(this.value)">
+						<option value="custom">Custom</option>
+						<option value="pc">PC Drive</option>
+						<option value="shugart-amiga">Shugart Amiga</option>
+						<option value="sd">SD Mode (Single Density)</option>
+						<option value="hd">HD Mode (High Density)</option>
+					</select>
+				</p>
+			</div>
+
+			<div class="card">
+				<h2>Drive configuration</h2>
+				<table>
+					<tbody>
+						<tr>
+							<td>Drive number:</td>
+							<td>
+								<select id="sim-drive-select">
+									<option value="0">Drive 0</option>
+									<option value="1">Drive 1</option>
+									<option value="2">Drive 2</option>
+									<option value="3">Drive 3</option>
+								</select>
+							</td>
+						</tr>
+						<tr>
+							<td>Drive type:</td>
+							<td>
+								<input type="radio" id="sim-type-pc" name="sim-type" value="pc" checked>
+								<label for="sim-type-pc">PC</label>
+								<input type="radio" id="sim-type-shugart" name="sim-type" value="shugart">
+								<label for="sim-type-shugart">Shugart</label>
+							</td>
+						</tr>
+						<tr>
+							<td>Density:</td>
+							<td>
+								<input type="radio" id="sim-density-sd" name="sim-density" value="sd">
+								<label for="sim-density-sd">SD (Single Density)</label>
+								<input type="radio" id="sim-density-dd" name="sim-density" value="dd" checked>
+								<label for="sim-density-dd">DD (Double Density)</label>
+								<input type="radio" id="sim-density-hd" name="sim-density" value="hd">
+								<label for="sim-density-hd">HD (High Density)</label>
+							</td>
+						</tr>
+						<tr>
+							<td>Select source (selsrc):</td>
+							<td>
+								<select id="sim-selsrc">
+									<option value="auto">Auto (based on drive)</option>
+									<option value="8">8 (SEL0/MOTEA - Pin 10)</option>
+									<option value="9">9 (SEL1/DRVSB - Pin 12)</option>
+									<option value="10">10 (SEL2/DRVSA - Pin 14)</option>
+									<option value="11">11 (SEL3 - Pin 6)</option>
+									<option value="12">12 (MTRON/MOTEB - Pin 16)</option>
+									<option value="13">13 (EXTERNAL IO - J5 Pin 4)</option>
+								</select>
+							</td>
+						</tr>
+						<tr>
+							<td>Motor source (motsrc):</td>
+							<td>
+								<select id="sim-motsrc">
+									<option value="auto">Auto (based on drive)</option>
+									<option value="8">8 (SEL0/MOTEA - Pin 10)</option>
+									<option value="9">9 (SEL1/DRVSB - Pin 12)</option>
+									<option value="10">10 (SEL2/DRVSA - Pin 14)</option>
+									<option value="11">11 (SEL3 - Pin 6)</option>
+									<option value="12">12 (MTRON/MOTEB - Pin 16)</option>
+									<option value="13">13 (EXTERNAL IO - J5 Pin 4)</option>
+								</select>
+							</td>
+						</tr>
+					</tbody>
+				</table>
+			</div>
+
+			<div class="card">
+				<h2>Simulation options</h2>
+				<table>
+					<tbody>
+						<tr>
+							<td><input type="checkbox" id="sim-write-protect" checked> Write protection</td>
+							<td><input type="checkbox" id="sim-index-pulse"> Index pulse</td>
+						</tr>
+						<tr>
+							<td><input type="checkbox" id="sim-ready-signal" checked> Ready signal</td>
+							<td><input type="checkbox" id="sim-disk-change"> Disk change</td>
+						</tr>
+						<tr>
+							<td><input type="checkbox" id="sim-track0-detection" checked> Track 0 detection</td>
+							<td><input type="checkbox" id="sim-write-gate"> Write gate</td>
+						</tr>
+					</tbody>
+				</table>
+			</div>
+
+			<div class="card">
+				<h2>LED configuration</h2>
+				<table>
+					<tbody>
+						<tr>
+							<td>Activity LED:</td>
+							<td>
+								<select id="led-activity">
+									<option value="none">None</option>
+									<option value="read">Read</option>
+									<option value="write">Write</option>
+									<option value="both" selected>Both</option>
+								</select>
+							</td>
+						</tr>
+						<tr>
+							<td>Status LED:</td>
+							<td>
+								<select id="led-status">
+									<option value="none">None</option>
+									<option value="ready" selected>Ready</option>
+									<option value="error">Error</option>
+									<option value="both">Both</option>
+								</select>
+							</td>
+						</tr>
+					</tbody>
+				</table>
+			</div>
+
+			<div class="card">
+				<h2>Actions</h2>
+				<p>
+					<input type="button" id="btSimStart" value="Start simulation" onclick="startSimulation()">
+					<input type="button" id="btSimStop" value="Stop simulation" onclick="stopSimulation()">
+					<input type="button" id="btSimEject" value="Eject disk" onclick="ejectDisk()">
+				</p>
+			</div>
 
 			<div id="header">
-				<!-- Server: <input type="text" id="txtServer" value="ws://127.1.0.1:8080"> -->
-				<!-- <input type="button" id="btConn" name="btConn" value="Connect!"><br /><br /> -->
-
-				Command : <input type="text" id="txtMsg" value="">
-				<input type="button" id="btMsg" name="btMsg" value="Send"><br /><br />
-
-				<textarea rows="30" cols="70" id="taLog" name="taLog"></textarea><br /><br />
-				<input type="button" id="btReboot" name="btReboot" value="Reboot"> <input type="button" id="btHalt" name="btHalt" value="Halt"><br /><br />
+				<h2>Command console</h2>
+				<p>
+					Command : <input type="text" id="txtMsg" value="">
+					<input type="button" id="btMsg" name="btMsg" value="Send"><br /><br />
+				</p>
+				<textarea rows="15" cols="70" id="taLog" name="taLog" style="width: 100%; font-family: monospace; font-size: 12px;"></textarea><br /><br />
 			</div>
 
 		</div>
+
+		<script>
+		// Masquer le message d'avertissement après 5 secondes
+		window.addEventListener('load', function() {
+			var warningDiv = document.getElementById('cable-warning');
+			if (warningDiv) {
+				setTimeout(function() {
+					warningDiv.style.opacity = '0';
+					setTimeout(function() {
+						warningDiv.style.display = 'none';
+					}, 500); // Attendre la fin de l'animation (0.5s)
+				}, 5000); // 5 secondes
+			}
+		});
+		
+		// Gestion du drag & drop
+		var dropZone = document.getElementById('drop-zone');
+		var fileInput = document.getElementById('file-input');
+		var fileInfo = document.getElementById('file-info');
+
+		// Empêcher le comportement par défaut
+		['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
+			dropZone.addEventListener(eventName, preventDefaults, false);
+			document.body.addEventListener(eventName, preventDefaults, false);
+		});
+
+		function preventDefaults(e) {
+			e.preventDefault();
+			e.stopPropagation();
+		}
+
+		// Gestion des événements de survol
+		['dragenter', 'dragover'].forEach(eventName => {
+			dropZone.addEventListener(eventName, highlight, false);
+		});
+
+		['dragleave', 'drop'].forEach(eventName => {
+			dropZone.addEventListener(eventName, unhighlight, false);
+		});
+
+		function highlight(e) {
+			dropZone.classList.add('drag-over');
+		}
+
+		function unhighlight(e) {
+			dropZone.classList.remove('drag-over');
+		}
+
+		// Gestion du drop
+		dropZone.addEventListener('drop', handleDrop, false);
+
+		function handleDrop(e) {
+			var dt = e.dataTransfer;
+			var files = dt.files;
+			handleFiles(files);
+		}
+
+		function handleFileSelect(files) {
+			handleFiles(files);
+		}
+
+		// Fonction pour calculer les valeurs automatiques selon le lecteur
+		function getAutoSelsrc(drive) {
+			// Pour PC: drive 0 = 8, drive 1 = 9, drive 2 = 10, drive 3 = 11
+			return 8 + parseInt(drive);
+		}
+		
+		function getAutoMotsrc(drive) {
+			// Pour PC: drive 0 = 8, drive 1 = 12, drive 2 = 8, drive 3 = 12 (alternance)
+			return (parseInt(drive) % 2 === 0) ? 8 : 12;
+		}
+		
+		function getAutoLed1src(drive) {
+			// LED activity selon les exemples:
+			// Drive 0 (A): led1src = 18 (LED verte pin 14)
+			// Drive 1 (B): led1src = 17 (LED verte pin 12)
+			// Drive 2: led1src = 19
+			// Drive 3: led1src = 20
+			// LED [1] = READ Drive 0 (PC) = 18
+			// LED [2] = WRITE Drive 0 (PC) = 19
+			// LED [3] = READ Drive 1 (PC) = 20
+			// LED [4] = WRITE Drive 1 (PC) = 21
+			var ledActivity = document.getElementById('led-activity').value;
+			
+			if (ledActivity === 'none') {
+				return 0;
+			}
+			
+			// Mapping selon le drive
+			var driveNum = parseInt(drive);
+			var ledMap = {
+				0: { read: 18, write: 19, both: 18 },  // Drive 0: LED verte pin 14
+				1: { read: 20, write: 21, both: 17 },  // Drive 1: LED verte pin 12 (17 pour "both")
+				2: { read: 22, write: 23, both: 19 },
+				3: { read: 24, write: 25, both: 20 }
+			};
+			
+			if (ledMap[driveNum]) {
+				return ledMap[driveNum][ledActivity] || ledMap[driveNum]['both'];
+			}
+			
+			// Fallback
+			return 18 + (driveNum * 2);
+		}
+		
+		function getAutoLed2src() {
+			// LED status: 24 = Host write gate input
+			var ledStatus = document.getElementById('led-status').value;
+			if (ledStatus === 'none') {
+				return 0;
+			}
+			return 24; // Host write gate input
+		}
+		
+		// Fonction pour configurer et charger un lecteur avec toutes les options
+		function configureAndLoadDrive(filename, resetFirst) {
+			if (typeof ws === 'undefined' || !ws || ws.readyState !== WebSocket.OPEN) {
+				alert('WebSocket connection not established.');
+				return;
+			}
+			
+			var drive = parseInt(document.getElementById('sim-drive-select').value);
+			var driveType = document.querySelector('input[name="sim-type"]:checked').value;
+			var density = document.querySelector('input[name="sim-density"]:checked').value;
+			var writeProtect = document.getElementById('sim-write-protect').checked ? 1 : 0;
+			var selsrc = document.getElementById('sim-selsrc').value;
+			var motsrc = document.getElementById('sim-motsrc').value;
+			var ledActivity = document.getElementById('led-activity').value;
+			var ledStatus = document.getElementById('led-status').value;
+			
+			// Calculer les valeurs automatiques si nécessaire
+			if (selsrc === 'auto') {
+				selsrc = getAutoSelsrc(drive);
+			} else {
+				selsrc = parseInt(selsrc);
+			}
+			
+			if (motsrc === 'auto') {
+				motsrc = getAutoMotsrc(drive);
+			} else {
+				motsrc = parseInt(motsrc);
+			}
+			
+			// Calculer pin02mode selon la densité
+			// 0 = SD/DD, 1 = HD
+			var pin02mode = (density === 'hd') ? 1 : 0;
+			
+			// pin34mode: 6 = nDiskChange (mode 1: Head step clear)
+			var pin34mode = 6;
+			
+			// Calculer les LEDs
+			var led1src = getAutoLed1src(drive);
+			var led2src = getAutoLed2src();
+			
+			var commands = [];
+			var log = document.getElementById("taLog");
+			
+			// Reset si demandé (seulement pour le premier lecteur)
+			if (resetFirst) {
+				commands.push("reset");
+			}
+			
+			// Configurer le lecteur
+			commands.push("fe_pin34mode " + drive + " " + pin34mode);
+			commands.push("fe_pin02mode " + drive + " " + pin02mode);
+			commands.push("fe_selsrc " + drive + " " + selsrc);
+			commands.push("fe_motsrc " + drive + " " + motsrc);
+			
+			// Configurer la protection en écriture
+			commands.push("fe_writeprotect " + drive + " " + writeProtect);
+			
+			// Configurer les LEDs (LED 0 = Activity, LED 1 = Status)
+			if (led1src > 0) {
+				commands.push("ledsrc 0 " + led1src);
+			}
+			if (led2src > 0) {
+				commands.push("ledsrc 1 " + led2src);
+			}
+			
+			// Note: Les autres options (index pulse, ready signal, disk change, track0, write gate)
+			// sont gérées par les registres FPGA et peuvent nécessiter des commandes supplémentaires
+			// si elles sont implémentées dans le futur
+			
+			// Charger l'image
+			commands.push("load " + drive + " \"" + filename + "\"");
+			
+			// Activer le lecteur
+			commands.push("enable_drive " + drive + " 1");
+			
+			// Envoyer toutes les commandes
+			for (var i = 0; i < commands.length; i++) {
+				var txt = commands[i] + "\n";
+				ws.send(txt);
+				log.value += ("Send: " + txt);
+			}
+			
+			return commands.length;
+		}
+
+		function handleFiles(files) {
+			if (files.length === 0) return;
+			
+			var file = files[0];
+			var drive = document.getElementById('sim-drive-select').value;
+			
+			fileInfo.innerHTML = '<strong>Selected file:</strong> ' + file.name + 
+								  ' (' + formatFileSize(file.size) + ')';
+			
+			console.log('Selected file:', file.name, file.size);
+			
+			// Note: Le fichier doit être uploadé vers la DE10-nano via Samba/FTP
+			// Chemin par défaut: /home/pauline/Drives_Simulation/
+			// L'utilisateur doit d'abord copier le fichier sur la DE10-nano
+			if (typeof ws !== 'undefined' && ws && ws.readyState === WebSocket.OPEN) {
+				// Construire le chemin du fichier sur la DE10-nano
+				// Le fichier doit être accessible depuis /home/pauline/Drives_Simulation/
+				var filename = '/home/pauline/Drives_Simulation/' + file.name;
+				
+				// Configurer et charger le lecteur avec toutes les options
+				// Reset seulement si c'est le drive 0 (premier lecteur)
+				var resetFirst = (parseInt(drive) === 0);
+				var cmdCount = configureAndLoadDrive(filename, resetFirst);
+				
+				fileInfo.innerHTML += '<br><span style="color: blue;">Configuring drive and loading image (if needed conversion)...</span>';
+			} else {
+				fileInfo.innerHTML += '<br><span style="color: red;">Error: WebSocket not connected. Please wait for connection.</span>';
+			}
+		}
+
+		function formatFileSize(bytes) {
+			if (bytes === 0) return '0 Bytes';
+			var k = 1024;
+			var sizes = ['Bytes', 'KB', 'MB', 'GB'];
+			var i = Math.floor(Math.log(bytes) / Math.log(k));
+			return Math.round(bytes / Math.pow(k, i) * 100) / 100 + ' ' + sizes[i];
+		}
+
+		// Application des profils de simulation
+		function applySimProfile(profile) {
+			switch(profile) {
+				case 'pc':
+					document.getElementById('sim-type-pc').checked = true;
+					document.getElementById('sim-density-dd').checked = true;
+					document.getElementById('sim-drive-select').value = '0';
+					break;
+				case 'shugart-amiga':
+					document.getElementById('sim-type-shugart').checked = true;
+					document.getElementById('sim-density-dd').checked = true;
+					document.getElementById('sim-drive-select').value = '0';
+					break;
+				case 'sd':
+					document.getElementById('sim-density-sd').checked = true;
+					break;
+				case 'hd':
+					document.getElementById('sim-density-hd').checked = true;
+					break;
+			}
+		}
+
+		// Fonctions de contrôle de la simulation
+		function startSimulation() {
+			if (typeof ws === 'undefined' || !ws || ws.readyState !== WebSocket.OPEN) {
+				alert('WebSocket connection not established.');
+				return;
+			}
+			
+			var drive = document.getElementById('sim-drive-select').value;
+			// Note: start_simulation n'existe peut-être pas encore, utiliser enable_drive à la place
+			var txt = "enable_drive " + drive + " 1\n";
+			ws.send(txt);
+			document.getElementById("taLog").value += ("Send: " + txt + "\n");
+		}
+
+		function stopSimulation() {
+			if (typeof ws === 'undefined' || !ws || ws.readyState !== WebSocket.OPEN) {
+				alert('WebSocket connection not established.');
+				return;
+			}
+			
+			var txt = "stop_simulation\n";
+			ws.send(txt);
+			document.getElementById("taLog").value += ("Send: " + txt + "\n");
+		}
+
+		function ejectDisk() {
+			if (typeof ws === 'undefined' || !ws || ws.readyState !== WebSocket.OPEN) {
+				alert('WebSocket connection not established.');
+				return;
+			}
+			
+			var drive = document.getElementById('sim-drive-select').value;
+			var txt = "ejectdisk " + drive + "\n";
+			ws.send(txt);
+			document.getElementById("taLog").value += ("Send: " + txt + "\n");
+		}
+		</script>
 
 		<hr>
 		<p class="rightalign">(C) 2021</p>

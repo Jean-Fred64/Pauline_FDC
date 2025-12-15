@@ -37,6 +37,7 @@
 #include <ftw.h>
 #include <dirent.h>
 #include <errno.h>
+#include <sys/wait.h>  // Pour WEXITSTATUS, WIFEXITED, etc.
 
 #include "libhxcfe.h"
 
@@ -44,6 +45,7 @@
 #include "fpga.h"
 #include "network.h"
 #include "errors.h"
+#include "stream_hfe.h"
 
 #include "bmp_file.h"
 #include "screen.h"
@@ -1776,26 +1778,93 @@ static int cmd_version(script_ctx * ctx, char * line)
 
 static int cmd_system(script_ctx * ctx, char * line)
 {
-	int i,ret;
+	int i;
 	char temp[DEFAULT_BUFLEN];
 	char temp2[DEFAULT_BUFLEN];
+	FILE *fp;
+	char buffer[1024];
+	int ret = 0;
 
 	memset(temp2,0,sizeof(temp2));
 
+	// Construire la commande à partir des paramètres
 	for(i=1;i<32;i++)
 	{
 		temp[0] = 0;
 		get_param(line, i,temp);
 		if(strlen(temp))
 		{
-			strcat(temp2," ");
-			strcat(temp2,temp);
+			if(strlen(temp2) == 0)
+			{
+				// Premier paramètre, pas d'espace avant
+				strcpy(temp2, temp);
+			}
+			else
+			{
+				strcat(temp2," ");
+				strcat(temp2,temp);
+			}
 		}
 	}
 
-	ret = system(temp2);
+	if(strlen(temp2) == 0)
+	{
+		ctx->script_printf(MSGTYPE_ERROR,"system: No command specified\n");
+		return 0;
+	}
 
-	ctx->script_printf(MSGTYPE_ERROR,"system() return : %d\n",ret);
+	// Utiliser popen() pour capturer la sortie en temps réel
+	// "r" = lecture, "2>&1" redirige stderr vers stdout
+	fp = popen(temp2, "r");
+	if(fp == NULL)
+	{
+		ctx->script_printf(MSGTYPE_ERROR,"system: Failed to execute command: %s\n", temp2);
+		return 0;
+	}
+
+	// Lire et envoyer chaque ligne en temps réel
+	ctx->script_printf(MSGTYPE_INFO_0,"Executing: %s\n", temp2);
+	
+	while(fgets(buffer, sizeof(buffer), fp) != NULL)
+	{
+		// Enlever le \n final si présent (fgets le garde)
+		int len = strlen(buffer);
+		if(len > 0 && buffer[len-1] == '\n')
+		{
+			buffer[len-1] = '\0';
+		}
+		
+		// Envoyer la ligne via le système de messages (affiché dans taLog)
+		ctx->script_printf(MSGTYPE_INFO_0,"%s\n", buffer);
+	}
+
+	// Récupérer le code de retour
+	ret = pclose(fp);
+	if(ret == -1)
+	{
+		ctx->script_printf(MSGTYPE_ERROR,"system: Failed to close command\n");
+	}
+	else
+	{
+		// WEXITSTATUS est une macro pour extraire le code de retour
+		// Si la commande s'est terminée normalement
+		if(WIFEXITED(ret))
+		{
+			int exit_code = WEXITSTATUS(ret);
+			if(exit_code == 0)
+			{
+				ctx->script_printf(MSGTYPE_INFO_0,"Command completed successfully (exit code: %d)\n", exit_code);
+			}
+			else
+			{
+				ctx->script_printf(MSGTYPE_WARNING,"Command completed with exit code: %d\n", exit_code);
+			}
+		}
+		else if(WIFSIGNALED(ret))
+		{
+			ctx->script_printf(MSGTYPE_ERROR,"Command terminated by signal: %d\n", WTERMSIG(ret));
+		}
+	}
 
 	return 0;
 }
@@ -1822,6 +1891,107 @@ static int cmd_sound(script_ctx * ctx, char * line)
 
 	ctx->script_printf(MSGTYPE_ERROR,"Bad/Missing parameter(s) ! : %s\n",line);
 
+	return 0;
+}
+
+static int cmd_load(script_ctx * ctx, char * line)
+{
+	int i, j, k;
+	int drive;
+	int doublestep = 0;
+	char drivestr[DEFAULT_BUFLEN];
+	char filenamestr[512];
+	char doublestepstr[DEFAULT_BUFLEN];
+	
+	i = get_param(line, 1, drivestr);
+	j = get_param(line, 2, filenamestr);
+	
+	if (i >= 0 && j >= 0)
+	{
+		drive = atoi(drivestr);
+		
+		// Vérifier le paramètre double step optionnel
+		k = get_param(line, 3, doublestepstr);
+		if (k >= 0)
+		{
+			doublestep = atoi(doublestepstr);
+		}
+		
+		// Supprimer les guillemets du nom de fichier si présents
+		if (filenamestr[0] == '"' && filenamestr[strlen(filenamestr)-1] == '"')
+		{
+			filenamestr[strlen(filenamestr)-1] = '\0';
+			memmove(filenamestr, filenamestr + 1, strlen(filenamestr));
+		}
+		
+		ctx->script_printf(MSGTYPE_INFO_0, "Loading image file: %s into drive %d\n", 
+		                  filenamestr, drive);
+		
+		if (drive < 0 || drive >= MAX_DRIVES)
+		{
+			ctx->script_printf(MSGTYPE_ERROR, "Invalid drive number: %d (must be 0-%d)\n", 
+			                  drive, MAX_DRIVES - 1);
+			return 0;
+		}
+		
+		// Utiliser la fonction avec conversion automatique
+		if (load_stream_hfe_with_conversion(fpga, drive, filenamestr, NULL, NULL, doublestep))
+		{
+			ctx->script_printf(MSGTYPE_INFO_0, "Image loaded successfully into drive %d\n", drive);
+			sound(fpga, 1500, 100);
+			return 1;
+		}
+		else
+		{
+			ctx->script_printf(MSGTYPE_ERROR, "Failed to load image file: %s\n", filenamestr);
+			error_sound(fpga);
+			return 0;
+		}
+	}
+	
+	ctx->script_printf(MSGTYPE_ERROR, "Bad/Missing parameter(s)! Usage: load <drive> <filename> [doublestep]\n");
+	return 0;
+}
+
+static int cmd_enable_drive(script_ctx * ctx, char * line)
+{
+	int i;
+	int drive;
+	int enable = 1;
+	char drivestr[DEFAULT_BUFLEN];
+	char enablestr[DEFAULT_BUFLEN];
+	
+	i = get_param(line, 1, drivestr);
+	
+	if (i >= 0)
+	{
+		drive = atoi(drivestr);
+		
+		// Vérifier le paramètre enable optionnel (1 par défaut)
+		i = get_param(line, 2, enablestr);
+		if (i >= 0)
+		{
+			enable = atoi(enablestr);
+		}
+		
+		if (drive < 0 || drive >= MAX_DRIVES)
+		{
+			ctx->script_printf(MSGTYPE_ERROR, "Invalid drive number: %d (must be 0-%d)\n", 
+			                  drive, MAX_DRIVES - 1);
+			return 0;
+		}
+		
+		enable_drive(fpga, drive, enable);
+		
+		if (enable)
+			ctx->script_printf(MSGTYPE_INFO_0, "Drive %d enabled\n", drive);
+		else
+			ctx->script_printf(MSGTYPE_INFO_0, "Drive %d disabled\n", drive);
+		
+		return 1;
+	}
+	
+	ctx->script_printf(MSGTYPE_ERROR, "Bad/Missing parameter(s)! Usage: enable_drive <drive> [enable]\n");
 	return 0;
 }
 
@@ -1859,6 +2029,13 @@ static cmd_list cmdlist[] =
 	{"sound",                   cmd_sound},
 
 	{"system",                  cmd_system},
+
+	{"load",                    cmd_load},
+	{"loadimage",               cmd_load},
+
+	{"enable_drive",             cmd_enable_drive},
+	{"enabledrive",              cmd_enable_drive},
+	{"disable_drive",            cmd_enable_drive},
 
 	{"fe_writeprotect",         cmd_set_writeprotect},
 	{"fe_motsrc",               cmd_set_motor_src},
@@ -1970,3 +2147,4 @@ int pauline_execute_script(script_ctx * ctx, char * filename)
 	}
 	return 0;
 }
+

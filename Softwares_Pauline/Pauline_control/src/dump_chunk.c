@@ -364,6 +364,10 @@ unsigned char * generate_chunk(fpga_state * state, uint16_t * data_in, uint32_t 
 	cheader->size = total_size;
 	cheader->packet_number = chunk_number;
 
+	if (!full_block || total_size < 4) {
+		goto error;
+	}
+
 	long_ptr = (uint32_t *)&full_block[total_size - 4];
 
 	*long_ptr = std_crc32(0xFFFFFFFF, (void*)full_block, total_size - 4);

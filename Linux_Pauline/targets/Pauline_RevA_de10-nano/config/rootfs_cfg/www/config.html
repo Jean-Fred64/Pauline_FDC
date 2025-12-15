@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="fr">
+<html lang="en">
 
 	<head>
 		<link rel="stylesheet" type="text/css" href="style.css">
@@ -14,15 +14,18 @@
 		<meta http-equiv="Expires" content="0">
 		<meta name="Author" content="HxC2001 Tech">
 		<meta name="Owner" content="HxC2001 Tech">
-		<meta name="Language" content="FR">
+		<meta name="Language" content="EN">
 		<meta name="Identifier-url" content="http://hxc2001.free.fr">
-		<meta name="dc.language" content="fr">
+		<meta name="dc.language" content="en">
 		<meta name="robots" content="index, follow">
 		<meta name="viewport" content="width=device-width, initial-scale=0.6">
+		<script type="text/javascript" src="profile.js"></script>
 		<script type="text/javascript" src="pauline.js"></script>
+		<script type="text/javascript" src="drives-script.js"></script>
+		<script type="text/javascript" src="config.js"></script>
 	</head>
 
-	<body onload="PaulineConnection()">
+	<body onload="PaulineConnection(); initConfigPage();">
 		<table class="topmenu">
 			<tbody>
 				<tr>
@@ -43,6 +46,7 @@
 									<td><img alt="" src="img/separat.gif"></td>
 									<td><a href="contacts.html" target="_blank">Contacts</a></td>
 									<td><img alt="" src="img/separat.gif"></td>
+									<td><span id="profile-indicator" class="profile-indicator"></span></td>
 								</tr>
 							</tbody>
 						</table>
@@ -52,32 +56,456 @@
 		</table>
 
 		<div class="hxc2001">
-			<b><u>Under construction</u></b><br>
+			<h1>Configuration</h1>
 
-			<br>
-			<img class="mediacenter" alt="" src="img/under_construction.jpg">
-			<br>
-
-			<b>Services enabled :</b><br>
-			<br>
-			- HTTP<br>
-			- SSH (Login/pwd : pauline/pauline, Login/pwd : root/root)<br>
-			- FTP (Login/pwd : pauline/pauline, Login/pwd : root/root)<br>
-			- Samba / Windows shares (Login/pwd : pauline/pauline)<br>
-			<br>
-
-			<div id="header">
-				<!-- Server: <input type="text" id="txtServer" value="ws://127.1.0.1:8080"> -->
-				<!-- <input type="button" id="btConn" name="btConn" value="Connect!"><br /><br /> -->
-
-				Command : <input type="text" id="txtMsg" value="">
-				<input type="button" id="btMsg" name="btMsg" value="Send"><br /><br />
-
-				<textarea rows="30" cols="70" id="taLog" name="taLog"></textarea><br /><br />
-				<input type="button" id="btReboot" name="btReboot" value="Reboot"> <input type="button" id="btHalt" name="btHalt" value="Halt"><br /><br />
+			<div class="card">
+				<h2>User profile</h2>
+				<p>
+					<label for="profile-select">Select profile:</label>
+					<select id="profile-select" onchange="changeProfile(this.value)">
+						<option value="standard">Standard</option>
+						<option value="archiviste">Archivist</option>
+					</select>
+					<span id="profile-indicator-inline" class="profile-indicator"></span>
+				</p>
+				<p><small>The <strong>Standard</strong> profile displays the classic dump interface.<br>
+				The <strong>Archivist</strong> profile enables additional features and makes the "Comments" field mandatory.</small></p>
 			</div>
 
+			<div class="card">
+				<h2>Display theme</h2>
+				<p>
+					<label for="theme-select">Select theme:</label>
+					<select id="theme-select" onchange="changeTheme(this.value)">
+						<option value="light">Light</option>
+						<option value="dark">Dark</option>
+					</select>
+				</p>
+				<p><small>The theme applies to all interface tabs.</small></p>
+			</div>
+
+			<div class="card">
+				<h2>drives.script file management</h2>
+				<p>
+					<strong>DE10 IP address:</strong> <span id="de10-ip-address">Loading...</span><br>
+					<strong>Samba path (Windows):</strong> <code id="samba-path">\\<span id="samba-ip">-</span>\pauline\Settings</code>
+					<button id="btCopySambaPath" onclick="copySambaPath()" title="Copy Windows Samba path to clipboard" style="margin-left: 8px; padding: 4px 8px; font-size: 12px; cursor: pointer; background-color: #4CAF50; color: white; border: none; border-radius: 3px;">📋 Copy</button><br>
+					<strong>Samba path (Linux/macOS):</strong> <code id="samba-path-smb">smb://<span id="samba-ip-smb">-</span>/pauline/Settings</code>
+					<button id="btCopySambaPathSMB" onclick="copySambaPathSMB()" title="Copy Linux/macOS Samba path to clipboard" style="margin-left: 8px; padding: 4px 8px; font-size: 12px; cursor: pointer; background-color: #2196F3; color: white; border: none; border-radius: 3px;">📋 Copy</button><br>
+					<small style="color: #666; font-style: italic;">💡 <strong>Note:</strong> Windows users should use the Windows format (\\IP\share). Linux and macOS users should use the smb:// format, which can be opened directly in file managers like Nautilus, Dolphin, or Finder.</small><br>
+					<strong>Current location:</strong> <code>/home/pauline/Settings/drives.script</code>
+				</p>
+				
+				<!-- Onglets pour les deux méthodes -->
+				<div style="margin: 20px 0; border-bottom: 2px solid #ddd;">
+					<button id="tab-console" class="tab-button active" onclick="switchTab('console')">Configuration Console</button>
+					<button id="tab-import" class="tab-button" onclick="switchTab('import')">File Import</button>
+				</div>
+				
+				<!-- Méthode 1 : Console de configuration -->
+				<div id="console-tab" class="tab-content">
+					<div id="drives-script-console" style="background-color: #f9f9f9; padding: 15px; border-radius: 4px; margin-bottom: 15px;">
+						<!-- Interface mode -->
+						<div class="config-section">
+							<h3 style="margin-top: 0; cursor: pointer;" onclick="toggleSection('interface-mode')">
+								<span id="interface-mode-arrow">▼</span> Interface Mode
+							</h3>
+							<div id="interface-mode-content" class="config-content">
+								<label><strong>DRIVES_INTERFACE_MODE:</strong>
+									<select id="config-interface-mode" onchange="updateDrivesScript()">
+										<option value="GENERIC_FLOPPY_INTERFACE">GENERIC_FLOPPY_INTERFACE</option>
+										<option value="APPLE_MACINTOSH_FLOPPY_INTERFACE">APPLE_MACINTOSH_FLOPPY_INTERFACE</option>
+										<option value="APPLE_II_FLOPPY_INTERFACE">APPLE_II_FLOPPY_INTERFACE</option>
+									</select>
+								</label>
+							</div>
+						</div>
+						
+						<!-- Macintosh GCR Mode -->
+						<div class="config-section">
+							<h3 style="cursor: pointer;" onclick="toggleSection('mac-gcr')">
+								<span id="mac-gcr-arrow">▼</span> Macintosh GCR Mode
+							</h3>
+							<div id="mac-gcr-content" class="config-content">
+								<label><strong>MACINTOSH_GCR_MODE:</strong>
+									<select id="config-mac-gcr-mode" onchange="updateDrivesScript()">
+										<option value="0">0 - MFM disks</option>
+										<option value="1">1 - GCR disks</option>
+									</select>
+								</label>
+								<small style="color: #666;">(Can be changed on the control web page)</small>
+							</div>
+						</div>
+						
+						<!-- Sound -->
+						<div class="config-section">
+							<h3 style="cursor: pointer;" onclick="toggleSection('sound')">
+								<span id="sound-arrow">▼</span> Sound Output
+							</h3>
+							<div id="sound-content" class="config-content">
+								<label>
+									<input type="checkbox" id="config-sound-enabled" checked onchange="updateDrivesScript()">
+									<strong>Enable sound output</strong> (PAULINE_UI_SOUND)
+								</label>
+							</div>
+						</div>
+						
+						<!-- Drive Timing Settings -->
+						<div class="config-section">
+							<h3 style="cursor: pointer;" onclick="toggleSection('timing')">
+								<span id="timing-arrow">▼</span> Drive Timing Settings
+							</h3>
+							<div id="timing-content" class="config-content">
+								<label><strong>DRIVE_MOTOR_SPINUP_DELAY:</strong> (milliseconds)
+									<input type="number" id="config-motor-spinup" value="1000" min="0" step="100" onchange="updateDrivesScript()" style="width: 100px; margin-left: 10px;">
+								</label><br>
+								<label><strong>DRIVE_HEAD_LOAD_DELAY:</strong> (milliseconds)
+									<input type="number" id="config-head-load" value="250" min="0" step="10" onchange="updateDrivesScript()" style="width: 100px; margin-left: 10px;">
+								</label><br>
+								<label><strong>DRIVE_HEAD_STEP_RATE:</strong> (microseconds)
+									<input type="number" id="config-head-step-rate" value="24000" min="0" step="1000" onchange="updateDrivesScript()" style="width: 100px; margin-left: 10px;">
+								</label>
+								<small style="color: #666; display: block; margin-top: 5px;">Typical: 3.5" → 2000, 5.25" → 12000</small><br>
+								<label><strong>DRIVE_HEAD_SETTLING_TIME:</strong> (microseconds)
+									<input type="number" id="config-head-settling" value="16000" min="0" step="1000" onchange="updateDrivesScript()" style="width: 100px; margin-left: 10px;">
+								</label><br>
+								<label><strong>DRIVE_STEP_SIGNAL_WIDTH:</strong> (microseconds, Shugart drives)
+									<input type="number" id="config-step-width" value="8" min="0" step="1" onchange="updateDrivesScript()" style="width: 100px; margin-left: 10px;">
+								</label>
+							</div>
+						</div>
+						
+						<!-- Apple Phases Settings -->
+						<div class="config-section">
+							<h3 style="cursor: pointer;" onclick="toggleSection('apple-phases')">
+								<span id="apple-phases-arrow">▼</span> Apple Phases Signal Settings
+							</h3>
+							<div id="apple-phases-content" class="config-content">
+								<label><strong>DRIVE_STEP_PHASES_WIDTH:</strong> (microseconds)
+									<input type="number" id="config-phases-width" value="14000" min="0" step="1000" onchange="updateDrivesScript()" style="width: 100px; margin-left: 10px;">
+								</label><br>
+								<label><strong>DRIVE_STEP_PHASES_STOP_WIDTH:</strong> (microseconds)
+									<input type="number" id="config-phases-stop-width" value="36000" min="0" step="1000" onchange="updateDrivesScript()" style="width: 100px; margin-left: 10px;">
+								</label>
+								<small style="color: #666; display: block; margin-top: 5px;">I recommend to increase DRIVE_HEAD_SETTLING_TIME at least to DRIVE_STEP_PHASES_STOP_WIDTH or more</small>
+							</div>
+						</div>
+						
+						<!-- Index Signal -->
+						<div class="config-section">
+							<h3 style="cursor: pointer;" onclick="toggleSection('index')">
+								<span id="index-arrow">▼</span> Index Signal Polarity
+							</h3>
+							<div id="index-content" class="config-content">
+								<label><strong>DRIVE_INDEX_SIGNAL_POLARITY:</strong>
+									<select id="config-index-polarity" onchange="updateDrivesScript()">
+										<option value="0">0 - Active low (default)</option>
+										<option value="1">1 - Active high</option>
+									</select>
+								</label>
+								<small style="color: #666; display: block; margin-top: 5px;">Useful if you use a custom index sensor</small>
+							</div>
+						</div>
+						
+						<!-- Drive 0 -->
+						<div class="config-section" id="drive-0-section">
+							<h3 style="cursor: pointer;" onclick="toggleSection('drive-0')">
+								<span id="drive-0-arrow">▼</span> Drive 0 Settings
+								<label class="toggle-switch" style="float: right; margin-right: 10px;" onclick="event.stopPropagation();">
+									<input type="checkbox" id="config-drive-0-enabled" checked onchange="toggleDrive(0, this.checked)">
+									<span class="toggle-slider"></span>
+								</label>
+							</h3>
+							<div id="drive-0-content" class="config-content">
+								<label><strong>DRIVE_0_DESCRIPTION:</strong>
+									<input type="text" id="config-drive-0-desc" value="3.5-inch Floppy drive" onchange="updateDrivesScript()" style="width: 300px; margin-left: 10px;">
+								</label><br>
+								<label><strong>DRIVE_0_SELECT_LINE:</strong>
+									<select id="config-drive-0-select" onchange="updateDrivesScript()" style="margin-left: 10px;">
+										<option value="DRIVES_PORT_DS0" selected>DRIVES_PORT_DS0</option>
+										<option value="DRIVES_PORT_DS1">DRIVES_PORT_DS1</option>
+										<option value="DRIVES_PORT_DS2">DRIVES_PORT_DS2</option>
+										<option value="DRIVES_PORT_DS3">DRIVES_PORT_DS3</option>
+										<option value="DRIVES_PORT_DRVSA">DRIVES_PORT_DRVSA (PC A:)</option>
+										<option value="DRIVES_PORT_DRVSB">DRIVES_PORT_DRVSB (PC B:)</option>
+										<option value="DRIVES_PORT_DS0_TWISTED_RIBBON">DRIVES_PORT_DS0_TWISTED_RIBBON</option>
+										<option value="DRIVES_PORT_DS1_TWISTED_RIBBON">DRIVES_PORT_DS1_TWISTED_RIBBON</option>
+										<option value="DRIVES_PORT_DS2_TWISTED_RIBBON">DRIVES_PORT_DS2_TWISTED_RIBBON</option>
+										<option value="DRIVES_PORT_DRVSA_TWISTED_RIBBON">DRIVES_PORT_DRVSA_TWISTED_RIBBON</option>
+										<option value="DRIVES_PORT_DRVSB_TWISTED_RIBBON">DRIVES_PORT_DRVSB_TWISTED_RIBBON</option>
+									</select>
+								</label><br>
+								<label><strong>DRIVE_0_MOTOR_LINE:</strong>
+									<select id="config-drive-0-motor" onchange="updateDrivesScript()" style="margin-left: 10px;">
+										<option value="DRIVES_PORT_MOTON">DRIVES_PORT_MOTON</option>
+										<option value="DRIVES_PORT_MOTEA">DRIVES_PORT_MOTEA (PC A:)</option>
+										<option value="DRIVES_PORT_MOTEB">DRIVES_PORT_MOTEB (PC B:)</option>
+										<option value="DRIVES_PORT_MOTON_TWISTED_RIBBON">DRIVES_PORT_MOTON_TWISTED_RIBBON</option>
+										<option value="DRIVES_PORT_MOTEA_TWISTED_RIBBON">DRIVES_PORT_MOTEA_TWISTED_RIBBON</option>
+										<option value="DRIVES_PORT_MOTEB_TWISTED_RIBBON">DRIVES_PORT_MOTEB_TWISTED_RIBBON</option>
+									</select>
+								</label><br>
+								<label><strong>DRIVE_0_MAX_STEPS:</strong>
+									<input type="number" id="config-drive-0-max-steps" value="82" min="0" max="200" onchange="updateDrivesScript()" style="width: 100px; margin-left: 10px;">
+								</label><br>
+								<label>
+									<input type="checkbox" id="config-drive-0-x68000-enabled" onchange="updateDrivesScript()">
+									<strong>Enable X68000 Option Select Line</strong>
+								</label>
+								<div id="drive-0-x68000-options" style="margin-left: 25px; margin-top: 5px; display: none;">
+									<label><strong>DRIVE_0_X68000_OPTION_SELECT_LINE:</strong>
+										<select id="config-drive-0-x68000" onchange="updateDrivesScript()" style="margin-left: 10px;">
+											<option value="DRIVES_PORT_X68000_OPTIONSEL0_OUT">DRIVES_PORT_X68000_OPTIONSEL0_OUT</option>
+											<option value="DRIVES_PORT_X68000_OPTIONSEL1_OUT">DRIVES_PORT_X68000_OPTIONSEL1_OUT</option>
+											<option value="DRIVES_PORT_X68000_OPTIONSEL2_OUT">DRIVES_PORT_X68000_OPTIONSEL2_OUT</option>
+											<option value="DRIVES_PORT_X68000_OPTIONSEL3_OUT">DRIVES_PORT_X68000_OPTIONSEL3_OUT</option>
+										</select>
+									</label>
+								</div>
+							</div>
+						</div>
+						
+						<!-- Drive 1 -->
+						<div class="config-section" id="drive-1-section">
+							<h3 style="cursor: pointer;" onclick="toggleSection('drive-1')">
+								<span id="drive-1-arrow">▼</span> Drive 1 Settings
+								<label class="toggle-switch" style="float: right; margin-right: 10px;" onclick="event.stopPropagation();">
+									<input type="checkbox" id="config-drive-1-enabled" checked onchange="toggleDrive(1, this.checked)">
+									<span class="toggle-slider"></span>
+								</label>
+							</h3>
+							<div id="drive-1-content" class="config-content">
+								<label><strong>DRIVE_1_DESCRIPTION:</strong>
+									<input type="text" id="config-drive-1-desc" value="5.25-inch Floppy drive" onchange="updateDrivesScript()" style="width: 300px; margin-left: 10px;">
+								</label><br>
+								<label><strong>DRIVE_1_SELECT_LINE:</strong>
+									<select id="config-drive-1-select" onchange="updateDrivesScript()" style="margin-left: 10px;">
+										<option value="DRIVES_PORT_DS0">DRIVES_PORT_DS0</option>
+										<option value="DRIVES_PORT_DS1" selected>DRIVES_PORT_DS1</option>
+										<option value="DRIVES_PORT_DS2">DRIVES_PORT_DS2</option>
+										<option value="DRIVES_PORT_DS3">DRIVES_PORT_DS3</option>
+										<option value="DRIVES_PORT_DRVSA">DRIVES_PORT_DRVSA (PC A:)</option>
+										<option value="DRIVES_PORT_DRVSB">DRIVES_PORT_DRVSB (PC B:)</option>
+										<option value="DRIVES_PORT_DS0_TWISTED_RIBBON">DRIVES_PORT_DS0_TWISTED_RIBBON</option>
+										<option value="DRIVES_PORT_DS1_TWISTED_RIBBON">DRIVES_PORT_DS1_TWISTED_RIBBON</option>
+										<option value="DRIVES_PORT_DS2_TWISTED_RIBBON">DRIVES_PORT_DS2_TWISTED_RIBBON</option>
+										<option value="DRIVES_PORT_DRVSA_TWISTED_RIBBON">DRIVES_PORT_DRVSA_TWISTED_RIBBON</option>
+										<option value="DRIVES_PORT_DRVSB_TWISTED_RIBBON">DRIVES_PORT_DRVSB_TWISTED_RIBBON</option>
+									</select>
+								</label><br>
+								<label><strong>DRIVE_1_MOTOR_LINE:</strong>
+									<select id="config-drive-1-motor" onchange="updateDrivesScript()" style="margin-left: 10px;">
+										<option value="DRIVES_PORT_MOTON" selected>DRIVES_PORT_MOTON</option>
+										<option value="DRIVES_PORT_MOTEA">DRIVES_PORT_MOTEA (PC A:)</option>
+										<option value="DRIVES_PORT_MOTEB">DRIVES_PORT_MOTEB (PC B:)</option>
+										<option value="DRIVES_PORT_MOTON_TWISTED_RIBBON">DRIVES_PORT_MOTON_TWISTED_RIBBON</option>
+										<option value="DRIVES_PORT_MOTEA_TWISTED_RIBBON">DRIVES_PORT_MOTEA_TWISTED_RIBBON</option>
+										<option value="DRIVES_PORT_MOTEB_TWISTED_RIBBON">DRIVES_PORT_MOTEB_TWISTED_RIBBON</option>
+									</select>
+								</label><br>
+								<label>
+									<input type="checkbox" id="config-drive-1-headload-enabled" onchange="updateDrivesScript()">
+									<strong>Enable Head Load Line</strong>
+								</label>
+								<div id="drive-1-headload-options" style="margin-left: 25px; margin-top: 5px; display: none;">
+									<label><strong>DRIVE_1_HEADLOAD_LINE:</strong>
+										<select id="config-drive-1-headload" onchange="updateDrivesScript()" style="margin-left: 10px;">
+											<option value="DRIVES_PORT_PIN04_OUT">DRIVES_PORT_PIN04_OUT</option>
+										</select>
+									</label>
+								</div><br>
+								<label><strong>DRIVE_1_MAX_STEPS:</strong>
+									<input type="number" id="config-drive-1-max-steps" value="82" min="0" max="200" onchange="updateDrivesScript()" style="width: 100px; margin-left: 10px;">
+								</label><br>
+								<label>
+									<input type="checkbox" id="config-drive-1-x68000-enabled" onchange="updateDrivesScript()">
+									<strong>Enable X68000 Option Select Line</strong>
+								</label>
+								<div id="drive-1-x68000-options" style="margin-left: 25px; margin-top: 5px; display: none;">
+									<label><strong>DRIVE_1_X68000_OPTION_SELECT_LINE:</strong>
+										<select id="config-drive-1-x68000" onchange="updateDrivesScript()" style="margin-left: 10px;">
+											<option value="DRIVES_PORT_X68000_OPTIONSEL0_OUT">DRIVES_PORT_X68000_OPTIONSEL0_OUT</option>
+											<option value="DRIVES_PORT_X68000_OPTIONSEL1_OUT">DRIVES_PORT_X68000_OPTIONSEL1_OUT</option>
+											<option value="DRIVES_PORT_X68000_OPTIONSEL2_OUT">DRIVES_PORT_X68000_OPTIONSEL2_OUT</option>
+											<option value="DRIVES_PORT_X68000_OPTIONSEL3_OUT">DRIVES_PORT_X68000_OPTIONSEL3_OUT</option>
+										</select>
+									</label>
+								</div>
+							</div>
+						</div>
+						
+						<!-- Drive 2 -->
+						<div class="config-section" id="drive-2-section">
+							<h3 style="cursor: pointer;" onclick="toggleSection('drive-2')">
+								<span id="drive-2-arrow">▼</span> Drive 2 Settings
+								<label class="toggle-switch" style="float: right; margin-right: 10px;" onclick="event.stopPropagation();">
+									<input type="checkbox" id="config-drive-2-enabled" checked onchange="toggleDrive(2, this.checked)">
+									<span class="toggle-slider"></span>
+								</label>
+							</h3>
+							<div id="drive-2-content" class="config-content">
+								<label><strong>DRIVE_2_DESCRIPTION:</strong>
+									<input type="text" id="config-drive-2-desc" value="5.25-inch Floppy drive" onchange="updateDrivesScript()" style="width: 300px; margin-left: 10px;">
+								</label><br>
+								<label><strong>DRIVE_2_SELECT_LINE:</strong>
+									<select id="config-drive-2-select" onchange="updateDrivesScript()" style="margin-left: 10px;">
+										<option value="DRIVES_PORT_DS0">DRIVES_PORT_DS0</option>
+										<option value="DRIVES_PORT_DS1">DRIVES_PORT_DS1</option>
+										<option value="DRIVES_PORT_DS2" selected>DRIVES_PORT_DS2</option>
+										<option value="DRIVES_PORT_DS3">DRIVES_PORT_DS3</option>
+										<option value="DRIVES_PORT_DRVSA">DRIVES_PORT_DRVSA (PC A:)</option>
+										<option value="DRIVES_PORT_DRVSB">DRIVES_PORT_DRVSB (PC B:)</option>
+										<option value="DRIVES_PORT_DS0_TWISTED_RIBBON">DRIVES_PORT_DS0_TWISTED_RIBBON</option>
+										<option value="DRIVES_PORT_DS1_TWISTED_RIBBON">DRIVES_PORT_DS1_TWISTED_RIBBON</option>
+										<option value="DRIVES_PORT_DS2_TWISTED_RIBBON">DRIVES_PORT_DS2_TWISTED_RIBBON</option>
+										<option value="DRIVES_PORT_DRVSA_TWISTED_RIBBON">DRIVES_PORT_DRVSA_TWISTED_RIBBON</option>
+										<option value="DRIVES_PORT_DRVSB_TWISTED_RIBBON">DRIVES_PORT_DRVSB_TWISTED_RIBBON</option>
+									</select>
+								</label><br>
+								<label><strong>DRIVE_2_MOTOR_LINE:</strong>
+									<select id="config-drive-2-motor" onchange="updateDrivesScript()" style="margin-left: 10px;">
+										<option value="DRIVES_PORT_MOTON" selected>DRIVES_PORT_MOTON</option>
+										<option value="DRIVES_PORT_MOTEA">DRIVES_PORT_MOTEA (PC A:)</option>
+										<option value="DRIVES_PORT_MOTEB">DRIVES_PORT_MOTEB (PC B:)</option>
+										<option value="DRIVES_PORT_MOTON_TWISTED_RIBBON">DRIVES_PORT_MOTON_TWISTED_RIBBON</option>
+										<option value="DRIVES_PORT_MOTEA_TWISTED_RIBBON">DRIVES_PORT_MOTEA_TWISTED_RIBBON</option>
+										<option value="DRIVES_PORT_MOTEB_TWISTED_RIBBON">DRIVES_PORT_MOTEB_TWISTED_RIBBON</option>
+									</select>
+								</label><br>
+								<label><strong>DRIVE_2_MAX_STEPS:</strong>
+									<input type="number" id="config-drive-2-max-steps" value="82" min="0" max="200" onchange="updateDrivesScript()" style="width: 100px; margin-left: 10px;">
+								</label><br>
+								<label>
+									<input type="checkbox" id="config-drive-2-x68000-enabled" onchange="updateDrivesScript()">
+									<strong>Enable X68000 Option Select Line</strong>
+								</label>
+								<div id="drive-2-x68000-options" style="margin-left: 25px; margin-top: 5px; display: none;">
+									<label><strong>DRIVE_2_X68000_OPTION_SELECT_LINE:</strong>
+										<select id="config-drive-2-x68000" onchange="updateDrivesScript()" style="margin-left: 10px;">
+											<option value="DRIVES_PORT_X68000_OPTIONSEL0_OUT">DRIVES_PORT_X68000_OPTIONSEL0_OUT</option>
+											<option value="DRIVES_PORT_X68000_OPTIONSEL1_OUT">DRIVES_PORT_X68000_OPTIONSEL1_OUT</option>
+											<option value="DRIVES_PORT_X68000_OPTIONSEL2_OUT">DRIVES_PORT_X68000_OPTIONSEL2_OUT</option>
+											<option value="DRIVES_PORT_X68000_OPTIONSEL3_OUT">DRIVES_PORT_X68000_OPTIONSEL3_OUT</option>
+										</select>
+									</label>
+								</div>
+							</div>
+						</div>
+						
+						<!-- Drive 3 -->
+						<div class="config-section" id="drive-3-section">
+							<h3 style="cursor: pointer;" onclick="toggleSection('drive-3')">
+								<span id="drive-3-arrow">▼</span> Drive 3 Settings
+								<label class="toggle-switch" style="float: right; margin-right: 10px;" onclick="event.stopPropagation();">
+									<input type="checkbox" id="config-drive-3-enabled" checked onchange="toggleDrive(3, this.checked)">
+									<span class="toggle-slider"></span>
+								</label>
+							</h3>
+							<div id="drive-3-content" class="config-content">
+								<label><strong>DRIVE_3_DESCRIPTION:</strong>
+									<input type="text" id="config-drive-3-desc" value="8-inch Floppy drive" onchange="updateDrivesScript()" style="width: 300px; margin-left: 10px;">
+								</label><br>
+								<label><strong>DRIVE_3_SELECT_LINE:</strong>
+									<select id="config-drive-3-select" onchange="updateDrivesScript()" style="margin-left: 10px;">
+										<option value="DRIVES_PORT_DS0">DRIVES_PORT_DS0</option>
+										<option value="DRIVES_PORT_DS1">DRIVES_PORT_DS1</option>
+										<option value="DRIVES_PORT_DS2">DRIVES_PORT_DS2</option>
+										<option value="DRIVES_PORT_DS3" selected>DRIVES_PORT_DS3</option>
+										<option value="DRIVES_PORT_DRVSA">DRIVES_PORT_DRVSA (PC A:)</option>
+										<option value="DRIVES_PORT_DRVSB">DRIVES_PORT_DRVSB (PC B:)</option>
+										<option value="DRIVES_PORT_DS0_TWISTED_RIBBON">DRIVES_PORT_DS0_TWISTED_RIBBON</option>
+										<option value="DRIVES_PORT_DS1_TWISTED_RIBBON">DRIVES_PORT_DS1_TWISTED_RIBBON</option>
+										<option value="DRIVES_PORT_DS2_TWISTED_RIBBON">DRIVES_PORT_DS2_TWISTED_RIBBON</option>
+										<option value="DRIVES_PORT_DRVSA_TWISTED_RIBBON">DRIVES_PORT_DRVSA_TWISTED_RIBBON</option>
+										<option value="DRIVES_PORT_DRVSB_TWISTED_RIBBON">DRIVES_PORT_DRVSB_TWISTED_RIBBON</option>
+									</select>
+								</label><br>
+								<label><strong>DRIVE_3_MOTOR_LINE:</strong>
+									<select id="config-drive-3-motor" onchange="updateDrivesScript()" style="margin-left: 10px;">
+										<option value="DRIVES_PORT_MOTON" selected>DRIVES_PORT_MOTON</option>
+										<option value="DRIVES_PORT_MOTEA">DRIVES_PORT_MOTEA (PC A:)</option>
+										<option value="DRIVES_PORT_MOTEB">DRIVES_PORT_MOTEB (PC B:)</option>
+										<option value="DRIVES_PORT_MOTON_TWISTED_RIBBON">DRIVES_PORT_MOTON_TWISTED_RIBBON</option>
+										<option value="DRIVES_PORT_MOTEA_TWISTED_RIBBON">DRIVES_PORT_MOTEA_TWISTED_RIBBON</option>
+										<option value="DRIVES_PORT_MOTEB_TWISTED_RIBBON">DRIVES_PORT_MOTEB_TWISTED_RIBBON</option>
+									</select>
+								</label><br>
+								<label><strong>DRIVE_3_MAX_STEPS:</strong>
+									<input type="number" id="config-drive-3-max-steps" value="82" min="0" max="200" onchange="updateDrivesScript()" style="width: 100px; margin-left: 10px;">
+								</label><br>
+								<label>
+									<input type="checkbox" id="config-drive-3-x68000-enabled" onchange="updateDrivesScript()">
+									<strong>Enable X68000 Option Select Line</strong>
+								</label>
+								<div id="drive-3-x68000-options" style="margin-left: 25px; margin-top: 5px; display: none;">
+									<label><strong>DRIVE_3_X68000_OPTION_SELECT_LINE:</strong>
+										<select id="config-drive-3-x68000" onchange="updateDrivesScript()" style="margin-left: 10px;">
+											<option value="DRIVES_PORT_X68000_OPTIONSEL0_OUT">DRIVES_PORT_X68000_OPTIONSEL0_OUT</option>
+											<option value="DRIVES_PORT_X68000_OPTIONSEL1_OUT">DRIVES_PORT_X68000_OPTIONSEL1_OUT</option>
+											<option value="DRIVES_PORT_X68000_OPTIONSEL2_OUT">DRIVES_PORT_X68000_OPTIONSEL2_OUT</option>
+											<option value="DRIVES_PORT_X68000_OPTIONSEL3_OUT">DRIVES_PORT_X68000_OPTIONSEL3_OUT</option>
+										</select>
+									</label>
+								</div>
+							</div>
+						</div>
+					</div>
+					
+					<!-- Aperçu du fichier généré -->
+					<div style="margin-top: 15px;">
+						<label><strong>Generated drives.script file preview:</strong></label>
+						<textarea id="drives-script-preview" rows="15" cols="80" class="drives-script-preview" readonly></textarea>
+					</div>
+				</div>
+				
+				<!-- Méthode 2 : Importation de fichier -->
+				<div id="import-tab" class="tab-content" style="display: none;">
+				<p>
+					<label for="file-upload-drives-script" style="display: inline-block; padding: 8px 16px; background-color: #4CAF50; color: white; cursor: pointer; border-radius: 4px;">
+						📁 Upload a drives.script file
+					</label>
+					<input type="file" id="file-upload-drives-script" accept=".script" style="display: none;" onchange="handleDrivesScriptFileUpload(this.files)">
+					<span id="file-upload-status" style="margin-left: 10px;"></span>
+				</p>
+				<div id="drop-zone-drives-script" class="drop-zone">
+					<p>📥 Drag and drop a drives.script file here</p>
+					<p style="font-size: 12px; color: #666;">or click the button above</p>
+				</div>
+					<p>
+						<label for="drives-script-content">drives.script file content:</label><br>
+						<textarea id="drives-script-content" rows="20" cols="80" style="width: 100%; font-family: monospace; font-size: 12px;"></textarea>
+					</p>
+					<p><small>After uploading a file, the console configuration will be automatically updated with the values found in the file.</small></p>
+				</div>
+				
+				<!-- Boutons d'action -->
+				<p style="margin-top: 20px; border-top: 2px solid #ddd; padding-top: 15px;">
+					<input type="button" id="btLoadDrivesScript" value="Load from server" onclick="loadDrivesScript()">
+					<input type="button" id="btGenerateDrivesScript" value="Generate drives.script" onclick="generateDrivesScriptFromConsole()">
+					<input type="button" id="btSaveDrivesScript" value="Save to server" onclick="saveDrivesScript()">
+					<input type="button" id="btReloadConfig" value="Reload configuration" onclick="reloadConfig()">
+					<input type="button" id="btReboot" name="btReboot" value="Reboot">
+				</p>
+				<p><small>The drives.script file configures floppy disk drives. Changes are applied after saving and reloading.</small></p>
+			</div>
+
+			<div class="card">
+				<h2>Available services</h2>
+				<p>
+					- HTTP<br>
+					- SSH (Login/pwd : pauline/pauline, Login/pwd : root/root)<br>
+					- FTP (Login/pwd : pauline/pauline, Login/pwd : root/root)<br>
+					- Samba / Windows shares (Login/pwd : pauline/pauline)<br>
+				</p>
+			</div>
+
+
 		</div>
+
+		<script>
+		// JavaScript externalisé dans drives-script.js et config.js
+		// Les fonctions sont maintenant chargées depuis les fichiers externes
+		</script>
 
 		<hr>
 		<p class="rightalign">(C) 2021</p>

@@ -28,3 +28,10 @@
 unsigned short * load_stream_hfe(fpga_state * state,int drive, char * imgfile, int * tracksize,int * numberoftracks,int double_step);
 unsigned short * save_stream_hfe(fpga_state * state,int drive, char * imgfile);
 
+// Nouvelles fonctions pour vérification et conversion
+int is_streamhfe_format(const char *filename);
+int convert_to_streamhfe(HXCFE* hxcfe, const char *infile, const char *outfile);
+unsigned short * load_stream_hfe_with_conversion(fpga_state * state, int drive, 
+                                                  char * imgfile, int * tracksize, 
+                                                  int * numberoftracks, int double_step);
+

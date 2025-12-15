@@ -32,6 +32,8 @@
 #include <fcntl.h>
 #include <sys/mman.h>
 #include <unistd.h>
+#include <time.h>
+#include <errno.h>
 
 #include <stdint.h>
 #include <pthread.h>
@@ -49,6 +51,11 @@
 static void prepare_LUT(uint16_t * lut)
 {
 	int i,a,b;
+
+	if(lut == NULL) {
+		return;
+	}
+
 	memset(lut,0x00,64*1024 * sizeof(uint16_t));
 
 	i = 0x8000;
@@ -240,6 +247,11 @@ fpga_state * init_fpga()
 	}
 
 	state->conv_lut = malloc(64 * 1024 * sizeof(uint16_t));
+	if (state->conv_lut == NULL) {
+		close(state->fd);
+		free(state);
+		return NULL;
+	}
 
 	prepare_LUT(state->conv_lut);
 
@@ -272,8 +284,9 @@ fpga_state * init_fpga()
 void reset_fpga(fpga_state * state)
 {
 	int i,drives_interface_mode;
+	const char* env_var_result;
 
-	if(!state)
+	if(!state || !state->regs)
 		return;
 
 	state->regs->control_reg = 0x00000000;
@@ -304,16 +317,22 @@ void reset_fpga(fpga_state * state)
 
 	drives_interface_mode = DRIVES_INTERFACE_GENERIC_MODE;
 
+	if(!state->libhxcfe)
+		return;
+
 	if(hxcfe_getEnvVarValue( state->libhxcfe, (char *)"ENABLE_APPLE_MODE" )>0)
 		drives_interface_mode = DRIVES_INTERFACE_APPLE_II_MODE;
 
-	if(!strcmp(hxcfe_getEnvVar( state->libhxcfe, (char *)"DRIVES_INTERFACE_MODE", NULL ),"GENERIC_FLOPPY_INTERFACE"))
+	env_var_result = hxcfe_getEnvVar( state->libhxcfe, (char *)"DRIVES_INTERFACE_MODE", NULL );
+	if(env_var_result && !strcmp(env_var_result, "GENERIC_FLOPPY_INTERFACE"))
 		drives_interface_mode = DRIVES_INTERFACE_GENERIC_MODE;
 
-	if(!strcmp(hxcfe_getEnvVar( state->libhxcfe, (char *)"DRIVES_INTERFACE_MODE", NULL ),"APPLE_II_FLOPPY_INTERFACE"))
+	env_var_result = hxcfe_getEnvVar( state->libhxcfe, (char *)"DRIVES_INTERFACE_MODE", NULL );
+	if(env_var_result && !strcmp(env_var_result, "APPLE_II_FLOPPY_INTERFACE"))
 		drives_interface_mode = DRIVES_INTERFACE_APPLE_II_MODE;
 
-	if(!strcmp(hxcfe_getEnvVar( state->libhxcfe, (char *)"DRIVES_INTERFACE_MODE", NULL ),"APPLE_MACINTOSH_FLOPPY_INTERFACE"))
+	env_var_result = hxcfe_getEnvVar( state->libhxcfe, (char *)"DRIVES_INTERFACE_MODE", NULL );
+	if(env_var_result && !strcmp(env_var_result, "APPLE_MACINTOSH_FLOPPY_INTERFACE"))
 		drives_interface_mode = DRIVES_INTERFACE_APPLE_MACINTOSH_MODE;
 
 	if(drives_interface_mode == DRIVES_INTERFACE_APPLE_II_MODE || drives_interface_mode == DRIVES_INTERFACE_APPLE_MACINTOSH_MODE )
@@ -1322,6 +1341,9 @@ void test_interface(fpga_state * state)
 void sound(fpga_state * state,int freq, int duration)
 {
 	int enable;
+
+	if(!state || !state->regs || !state->libhxcfe)
+		return;
 
 	enable = hxcfe_getEnvVarValue( state->libhxcfe, "PAULINE_UI_SOUND" );
 

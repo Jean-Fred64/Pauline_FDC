@@ -97,6 +97,10 @@ uint32_t std_crc32(uint32_t crc, const void *buf, size_t size)
 {
 	const uint8_t *p;
 
+	if (buf == NULL) {
+		return 0; // Retourner 0 si buf est NULL pour éviter le crash
+	}
+
 	p = buf;
 	crc = crc ^ ~0U;
 

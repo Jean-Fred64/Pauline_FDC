@@ -876,4 +876,556 @@ div.hxc2001 div.fn {
   text-align: center;
 }
 
+/* Styles modernisés et améliorations */
+input[type="text"], input[type="number"], textarea, select {
+	border-radius: 4px;
+	border: 1px solid #8cacbb;
+	padding: 6px 10px;
+	font-size: 14px;
+	transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+input[type="text"]:focus, input[type="number"]:focus, textarea:focus, select:focus {
+	outline: none;
+	border-color: #436976;
+	box-shadow: 0 0 0 2px rgba(67, 105, 118, 0.2);
+}
+
+input[type="button"], button, input[type="submit"] {
+	border-radius: 4px;
+	border: 1px solid #8cacbb;
+	background: linear-gradient(to bottom, #f5f5f5, #e0e0e0);
+	padding: 8px 16px;
+	cursor: pointer;
+	transition: all 0.2s;
+	font-weight: 500;
+}
+
+input[type="button"]:hover, button:hover, input[type="submit"]:hover {
+	background: linear-gradient(to bottom, #e8e8e8, #d0d0d0);
+	box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+	transform: translateY(-1px);
+}
+
+input[type="button"]:active, button:active, input[type="submit"]:active {
+	transform: translateY(0);
+	box-shadow: 0 1px 2px rgba(0,0,0,0.1);
+}
+
+input[type="checkbox"], input[type="radio"] {
+	cursor: pointer;
+	width: 18px;
+	height: 18px;
+	margin-right: 6px;
+	vertical-align: middle;
+}
+
+.slidecontainer {
+	margin: 15px 0;
+}
+
+.slider {
+	-webkit-appearance: none;
+	appearance: none;
+	width: 300px;
+	height: 6px;
+	border-radius: 3px;
+	background: #ddd;
+	outline: none;
+	transition: background 0.3s;
+}
+
+.slider:hover {
+	background: #ccc;
+}
+
+.slider::-webkit-slider-thumb {
+	-webkit-appearance: none;
+	appearance: none;
+	width: 18px;
+	height: 18px;
+	border-radius: 50%;
+	background: #436976;
+	cursor: pointer;
+	transition: background 0.2s;
+}
+
+.slider::-webkit-slider-thumb:hover {
+	background: #2d4a57;
+}
+
+.slider::-moz-range-thumb {
+	width: 18px;
+	height: 18px;
+	border-radius: 50%;
+	background: #436976;
+	cursor: pointer;
+	border: none;
+	transition: background 0.2s;
+}
+
+.slider::-moz-range-thumb:hover {
+	background: #2d4a57;
+}
+
+/* Indicateur de profil */
+.profile-indicator {
+	display: inline-block;
+	padding: 4px 12px;
+	border-radius: 12px;
+	font-size: 12px;
+	font-weight: bold;
+	margin-left: 10px;
+	background: #e0e0e0;
+	color: #333;
+}
+
+.profile-indicator.archiviste {
+	background: #4a90e2;
+	color: white;
+}
+
+.profile-indicator.standard {
+	background: #95a5a6;
+	color: white;
+}
+
+/* Zone de drop pour fichiers */
+.drop-zone {
+	border: 2px dashed #8cacbb;
+	border-radius: 8px;
+	padding: 40px;
+	text-align: center;
+	background: #f9f9f9;
+	transition: all 0.3s;
+	cursor: pointer;
+	margin: 20px 0;
+}
+
+.drop-zone:hover, .drop-zone.drag-over {
+	border-color: #436976;
+	background: #f0f0f0;
+}
+
+.drop-zone.drag-over {
+	background: #e8f4f8;
+}
+
+/* Cards modernes */
+.card {
+	background: white;
+	border-radius: 8px;
+	padding: 20px;
+	margin: 15px 0;
+	box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+	border: 1px solid #e0e0e0;
+}
+
+/* Alertes */
+.alert {
+	padding: 12px 16px;
+	border-radius: 4px;
+	margin: 10px 0;
+	border-left: 4px solid;
+}
+
+.alert-warning {
+	background: #fff3cd;
+	border-color: #ffc107;
+	color: #856404;
+}
+
+.alert-error {
+	background: #f8d7da;
+	border-color: #dc3545;
+	color: #721c24;
+}
+
+.alert-info {
+	background: #d1ecf1;
+	border-color: #0c5460;
+	color: #0c5460;
+}
+
+/* Thème sombre */
+body.theme-dark {
+	background-color: #1a1a1a;
+	color: #e0e0e0;
+}
+
+body.theme-dark .hxc2001 {
+	color: #e0e0e0;
+}
+
+body.theme-dark table.topmenu_menu {
+	background-color: #2d2d2d;
+	color: #e0e0e0;
+	border-color: #444;
+}
+
+body.theme-dark table.topmenu_menu td {
+	border-color: #444;
+}
+
+body.theme-dark table.topmenu_menu a {
+	color: #b0b0b0;
+}
+
+body.theme-dark table.topmenu_menu a:hover {
+	color: #fff;
+}
+
+body.theme-dark .hxc2001 h1,
+body.theme-dark .hxc2001 h2,
+body.theme-dark .hxc2001 h3,
+body.theme-dark .hxc2001 h4,
+body.theme-dark .hxc2001 h5 {
+	color: #e0e0e0;
+	border-color: #444;
+}
+
+body.theme-dark input[type="text"],
+body.theme-dark input[type="number"],
+body.theme-dark textarea,
+body.theme-dark select {
+	background-color: #2d2d2d;
+	color: #e0e0e0;
+	border-color: #555;
+}
+
+body.theme-dark input[type="text"]:focus,
+body.theme-dark input[type="number"]:focus,
+body.theme-dark textarea:focus,
+body.theme-dark select:focus {
+	border-color: #4a90e2;
+	box-shadow: 0 0 0 2px rgba(74, 144, 226, 0.3);
+}
+
+body.theme-dark input[type="button"],
+body.theme-dark button {
+	background: linear-gradient(to bottom, #3d3d3d, #2d2d2d);
+	color: #e0e0e0;
+	border-color: #555;
+}
+
+body.theme-dark input[type="button"]:hover,
+body.theme-dark button:hover {
+	background: linear-gradient(to bottom, #4d4d4d, #3d3d3d);
+}
+
+/* Bouton reboot avec bordure de couleur différente */
+#btReboot {
+	border-color: #ff7f7f !important;
+}
+
+body.theme-dark #btReboot {
+	border-color: #ff7f7f !important;
+}
+
+body.theme-dark .card {
+	background: #2d2d2d;
+	border-color: #444;
+}
+
+body.theme-dark .drop-zone {
+	background: #2d2d2d;
+	border-color: #555;
+}
+
+body.theme-dark .drop-zone:hover,
+body.theme-dark .drop-zone.drag-over {
+	background: #3d3d3d;
+	border-color: #4a90e2;
+}
+
+body.theme-dark .slider {
+	background: #444;
+}
+
+body.theme-dark .slider::-webkit-slider-thumb {
+	background: #4a90e2;
+}
+
+body.theme-dark .slider::-moz-range-thumb {
+	background: #4a90e2;
+}
+
+body.theme-dark textarea {
+	background-color: #2d2d2d;
+	color: #e0e0e0;
+}
+
+body.theme-dark .alert-warning {
+	background: #3d2d1a;
+	border-color: #ffc107;
+	color: #ffc107;
+}
+
+body.theme-dark .alert-error {
+	background: #3d1a1a;
+	border-color: #dc3545;
+	color: #ff6b6b;
+}
+
+body.theme-dark .alert-info {
+	background: #1a2d3d;
+	border-color: #0c5460;
+	color: #5bc0de;
+}
+
+/* Champs obligatoires */
+.required-field {
+	border-left: 3px solid #ffc107 !important;
+}
+
+.required-field:focus {
+	border-left-color: #ff9800 !important;
+}
+
+/* Amélioration des tables */
+div.hxc2001 table {
+	border-collapse: separate;
+	border-spacing: 0;
+}
+
+div.hxc2001 table td {
+	padding: 8px 12px;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+	.slider {
+		width: 100%;
+		max-width: 300px;
+	}
+	
+	.card {
+		padding: 15px;
+	}
+}
+
+/* Styles pour la console de configuration drives.script */
+.config-section {
+	border: 1px solid #ddd;
+	border-radius: 4px;
+	margin-bottom: 10px;
+	background-color: white;
+	transition: border-color 0.2s, opacity 0.2s;
+}
+
+.config-section.drive-disabled {
+	opacity: 0.6;
+}
+
+.config-section h3 {
+	margin: 0;
+	padding: 10px 15px;
+	background-color: #f0f0f0;
+	border-bottom: 1px solid #ddd;
+	user-select: none;
+	position: relative;
+}
+
+.config-section h3:hover {
+	background-color: #e0e0e0;
+}
+
+.config-content {
+	padding: 15px;
+	display: block;
+}
+
+.config-content label {
+	display: block;
+	margin-bottom: 10px;
+}
+
+.config-content input[type="text"],
+.config-content input[type="number"],
+.config-content select {
+	padding: 5px;
+	border: 1px solid #ccc;
+	border-radius: 3px;
+}
+
+.config-content input:disabled,
+.config-content select:disabled {
+	background-color: #f0f0f0;
+	border-color: #ddd;
+	color: #999;
+	opacity: 0.7;
+	cursor: not-allowed;
+}
+
+.config-content input[type="checkbox"] {
+	margin-right: 8px;
+}
+
+/* Styles pour les onglets */
+.tab-button {
+	padding: 10px 20px;
+	margin-right: 5px;
+	border: none;
+	border-radius: 4px 4px 0 0;
+	cursor: pointer;
+	font-weight: bold;
+	transition: all 0.3s;
+	background-color: #e0e0e0;
+	color: #333;
+	border-bottom: 2px solid transparent;
+}
+
+.tab-button:hover {
+	background-color: #d0d0d0;
+}
+
+.tab-button.active {
+	background-color: #4CAF50;
+	color: white;
+	border-bottom-color: #4CAF50;
+}
+
+#tab-import.tab-button.active {
+	background-color: #2196F3;
+	border-bottom-color: #2196F3;
+}
+
+.tab-content {
+	margin-top: 10px;
+}
+
+/* Toggle switch style (comme sur téléphone) */
+.toggle-switch {
+	position: relative;
+	display: inline-block;
+	width: 50px;
+	height: 26px;
+	vertical-align: middle;
+}
+
+.toggle-switch input {
+	opacity: 0;
+	width: 0;
+	height: 0;
+}
+
+.toggle-slider {
+	position: absolute;
+	cursor: pointer;
+	top: 0;
+	left: 0;
+	right: 0;
+	bottom: 0;
+	background-color: #ccc;
+	transition: 0.3s;
+	border-radius: 26px;
+}
+
+.toggle-slider:before {
+	position: absolute;
+	content: "";
+	height: 20px;
+	width: 20px;
+	left: 3px;
+	bottom: 3px;
+	background-color: white;
+	transition: 0.3s;
+	border-radius: 50%;
+}
+
+.toggle-switch input:checked + .toggle-slider {
+	background-color: #4CAF50;
+}
+
+.toggle-switch input:checked + .toggle-slider:before {
+	transform: translateX(24px);
+}
+
+.toggle-switch input:disabled + .toggle-slider {
+	opacity: 0.5;
+	cursor: not-allowed;
+}
+
+/* Mode dark */
+body.theme-dark .config-section {
+	background-color: #2d2d2d;
+	border-color: #3a3a3a;
+}
+
+body.theme-dark .config-section.drive-disabled {
+	opacity: 0.4;
+}
+
+body.theme-dark .config-section h3 {
+	background-color: #3d3d3d;
+	border-bottom-color: #3a3a3a;
+	color: #e0e0e0;
+}
+
+body.theme-dark .config-section h3:hover {
+	background-color: #4d4d4d;
+}
+
+body.theme-dark .config-content {
+	background-color: #2d2d2d;
+	color: #e0e0e0;
+}
+
+body.theme-dark .config-content input[type="text"],
+body.theme-dark .config-content input[type="number"],
+body.theme-dark .config-content select {
+	background-color: #3d3d3d;
+	border-color: #4a4a4a;
+	color: #e0e0e0;
+}
+
+body.theme-dark .config-content input:disabled,
+body.theme-dark .config-content select:disabled {
+	background-color: #2a2a2a;
+	border-color: #3a3a3a;
+	color: #666;
+	opacity: 0.6;
+}
+
+body.theme-dark #drives-script-console {
+	background-color: #2d2d2d;
+}
+
+.drives-script-preview {
+	width: 100%;
+	font-family: monospace;
+	font-size: 11px;
+	background-color: #f5f5f5;
+	border: 1px solid #ddd;
+	border-radius: 3px;
+	padding: 8px;
+}
+
+body.theme-dark .drives-script-preview {
+	background-color: #1d1d1d;
+	color: #e0e0e0;
+	border-color: #3a3a3a;
+}
+
+body.theme-dark .tab-button {
+	background-color: #3d3d3d;
+	color: #e0e0e0;
+	border-bottom-color: transparent;
+}
+
+body.theme-dark .tab-button:hover {
+	background-color: #4d4d4d;
+}
+
+body.theme-dark .tab-button.active {
+	background-color: #4CAF50;
+	color: white;
+	border-bottom-color: #4CAF50;
+}
+
+body.theme-dark #tab-import.tab-button.active {
+	background-color: #2196F3;
+	border-bottom-color: #2196F3;
+}
+
 

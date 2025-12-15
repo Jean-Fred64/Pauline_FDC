@@ -19,6 +19,7 @@
 		<meta name="dc.language" content="fr">
 		<meta name="robots" content="index, follow">
 		<meta name="viewport" content="width=device-width, initial-scale=0.6">
+		<script type="text/javascript" src="profile.js"></script>
 		<script type="text/javascript" src="pauline.js"></script>
 	</head>
 
@@ -43,6 +44,7 @@
 									<td><img alt="" src="img/separat.gif"></td>
 									<td><a href="contacts.html" target="_blank">Contacts</a></td>
 									<td><img alt="" src="img/separat.gif"></td>
+									<td><span id="profile-indicator" class="profile-indicator"></span></td>
 								</tr>
 							</tbody>
 						</table>
@@ -64,8 +66,8 @@
 							<td><input type="text" id="txtDumpName" value="untitled"></td>
 						</tr>
 						<tr>
-							<td>Comments :</td>
-							<td><input type="text" id="txtDumpComment" value=""></td>
+							<td>Comments <span id="comment-required" style="display:none; color:red;">*</span> :</td>
+							<td><input type="text" id="txtDumpComment" value="" class=""></td>
 						</tr>
 						<tr>
 							<td>Additional comments :</td>
@@ -105,6 +107,33 @@
 						<option value="4">Drive 4</option>
 						<option value="5">Drive 5</option>
 					</select>
+				</p>
+			</div>
+
+			<h2>Drive Control</h2>
+
+			<div id="DriveControl">
+				<p>
+						Drive 0 : <br>
+						<input type="button" id="btONPIN14" name="btONPIN14" value='Controller Signals ON (PIN 14)'>
+						<input type="button" id="btOFFPIN14" name="btOFFPIN14" value='Controller Signals OFF (PIN 14)'><br>
+						<input type="button" id="btONPIN10" name="btONPIN10" value='MOTOR ON (PIN 10)'>
+						<input type="button" id="btOFFPIN10" name="btOFFPIN10" value='MOTOR OFF (PIN 10)'><br>
+                        <br>
+                        Cleaning ... : <br>
+						<input type="button" id="btCLEANDISKII" name="btCLEANDISKII" value='CLEAN APPLE DISK II 35 tracks MAX'>
+                        <input type="button" id="btCLEANPC" name="btCLEANPC" value='CLEAN PC DRIVE 82 tracks MAX'><br>
+                        <br>
+                        Check Drives : <br>
+						<input type="button" id="btautodetect" name="btautodetect" value='Drives auto-detection'>
+						<input type="button" id="btTestMaxTrack" name="btTestMaxTrack" value='Drive TEST MAX Tracks'><br>
+                        <br>
+						Drive 1 : <br>
+						<input type="button" id="btONPIN12" name="btONPIN12" value='Controller Signals ON (PIN 12)'>
+						<input type="button" id="btOFFPIN12" name="btOFFPIN12" value='Controller Signals OFF (PIN 12)'><br>
+						<input type="button" id="btONPIN16" name="btONPIN16" value='MOTOR ON (PIN 16)'>
+						<input type="button" id="btOFFPIN16" name="btOFFPIN16" value='MOTOR OFF (PIN 16)'><br>
+						<br>
 				</p>
 			</div>
 
@@ -177,9 +206,6 @@
 							<td>
 								<input type="checkbox" id="ckbALTRPM">Alternate RPM
 							</td>
-							<td>
-								<input type="checkbox" id="ckbMACMFMMode">Apple Macintosh GCR mode
-							</td>							
 						</tr>
 
 					</tbody>
@@ -361,7 +387,89 @@
 		</div>
 
 		<hr>
-		<p class="rightalign">(C) 2021</p>
+		<p class="rightalign">(C) 2025</p>
+
+		<script>
+		// Initialisation de la page dump
+		document.addEventListener('DOMContentLoaded', function() {
+			updateDumpPageForProfile();
+			
+			// Ajouter validation pour le mode archiviste
+			var btReadDisk = document.getElementById("btReadDisk");
+			var btReadTrack = document.getElementById("btReadTrack");
+			
+			if (btReadDisk) {
+				var originalReadDisk = btReadDisk.onclick;
+				btReadDisk.onclick = function() {
+					if (!validateDumpForm()) {
+						return false;
+					}
+					if (originalReadDisk) {
+						return originalReadDisk.call(this);
+					}
+				};
+			}
+			
+			if (btReadTrack) {
+				var originalReadTrack = btReadTrack.onclick;
+				btReadTrack.onclick = function() {
+					if (!validateDumpForm()) {
+						return false;
+					}
+					if (originalReadTrack) {
+						return originalReadTrack.call(this);
+					}
+				};
+			}
+		});
+
+		function updateDumpPageForProfile() {
+			var profile = getCurrentProfile();
+			var commentField = document.getElementById("txtDumpComment");
+			var commentRequired = document.getElementById("comment-required");
+			
+			if (profile === 'archiviste') {
+				// Mode archiviste : rendre le champ obligatoire
+				if (commentField) {
+					commentField.classList.add('required-field');
+					commentField.setAttribute('required', 'required');
+				}
+				if (commentRequired) {
+					commentRequired.style.display = 'inline';
+				}
+				
+				// Afficher des fonctionnalités supplémentaires si nécessaire
+				// (peut être étendu plus tard)
+			} else {
+				// Mode standard
+				if (commentField) {
+					commentField.classList.remove('required-field');
+					commentField.removeAttribute('required');
+				}
+				if (commentRequired) {
+					commentRequired.style.display = 'none';
+				}
+			}
+		}
+
+		function validateDumpForm() {
+			var profile = getCurrentProfile();
+			
+			if (profile === 'archiviste') {
+				var commentField = document.getElementById("txtDumpComment");
+				if (commentField && !commentField.value.trim()) {
+					alert('The "Comments" field is mandatory in Archivist mode. Please fill in this field before starting the dump.');
+					commentField.focus();
+					commentField.style.borderColor = '#dc3545';
+					setTimeout(function() {
+						commentField.style.borderColor = '';
+					}, 3000);
+					return false;
+				}
+			}
+			return true;
+		}
+		</script>
 
 	</body>
 
