@@ -18,3 +18,8 @@
 [![Pauline](https://github.com/Jean-Fred64/Pauline_FDC/blob/main/WWW/New%20interface/Medias/Pauline%20logo%20025.png)](https://sourceforge.net/p/hxcfloppyemu/code/HEAD/tree/HxCFloppyEmulator/Pauline/trunk/)
 
 [HxC Floppy Drive Emulator Code](https://github.com/jfdelnero/Pauline)
+
+
+:construction: Still WORK IN PROGRESS :construction:
+
+[New Gui Pauline here](Softwares_Pauline/Pauline_control/DOCUMENTATION.md) # Version : GPS 🇯🇵 # Mr JeAn-FReD 🇫🇷
