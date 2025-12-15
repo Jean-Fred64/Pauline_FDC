@@ -2,7 +2,7 @@
 
 ## Ressources GUI
 
-**WIP** 
+*STOP 16/12/2025* 
   
 ![FR](https://raw.githubusercontent.com/stevenrskelton/flag-icon/master/png/16/country-4x3/fr.png)  [Documentation Pauline FR](https://wernli.pages.in2p3.fr/pauline-doc/fr/)  
   
