@@ -1,29 +1,29 @@
-# Documentation Pauline - Compilation et Déploiement
+# 📚 Documentation Pauline - Compilation et Déploiement
 
-## Table des matières
+## 📑 Table des matières
 
-1. [Compilation du projet Pauline](#compilation-du-projet-pauline)
-2. [Modification de la page web](#modification-de-la-page-web)
-3. [Scripts de déploiement et gestion](#scripts-de-déploiement-et-gestion)
+1. [🔨 Compilation du projet Pauline](#compilation-du-projet-pauline)
+2. [🌐 Modification de la page web](#modification-de-la-page-web)
+3. [📜 Scripts de déploiement et gestion](#scripts-de-déploiement-et-gestion)
    - [deploy.sh - Déploiement du binaire](#deploysh---déploiement-du-binaire)
    - [deploy_www.sh - Déploiement des fichiers web](#deploy_wwwsh---déploiement-des-fichiers-web)
    - [restore.sh - Restauration d'une sauvegarde](#restoresh---restauration-dune-sauvegarde)
    - [retrieve_www.sh - Récupération des fichiers web](#retrieve_wwwsh---récupération-des-fichiers-web)
    - [compare_www.sh - Comparaison des fichiers web](#compare_wwwsh---comparaison-des-fichiers-web)
-4. [Workflow complet](#workflow-complet)
-5. [Dépannage](#dépannage)
+4. [🔄 Workflow complet](#workflow-complet)
+5. [🔧 Dépannage](#dépannage)
 
 ---
 
-## Compilation du projet Pauline
+## 🔨 Compilation du projet Pauline
 
-### Prérequis
+### 📋 Prérequis
 
 - Un système Linux avec `build-essential` installé
 - Le cross-compilateur ARM : `arm-linux-gnueabihf-gcc`
 - Les dépendances nécessaires (libpng, etc.)
 
-### Compilation pour ARM (DE10-nano)
+### 🎯 Compilation pour ARM (DE10-nano)
 
 Pour compiler le binaire `pauline` pour la carte DE10-nano :
 
@@ -35,7 +35,7 @@ make CC=arm-linux-gnueabihf-gcc
 
 Le binaire `pauline` sera généré dans le répertoire courant.
 
-### Compilation en mode debug
+### 🐛 Compilation en mode debug
 
 Pour compiler avec les symboles de debug :
 
@@ -44,7 +44,7 @@ make CC=arm-linux-gnueabihf-gcc DEBUG=1 clean
 make CC=arm-linux-gnueabihf-gcc DEBUG=1
 ```
 
-### Nettoyage
+### 🧹 Nettoyage
 
 Pour nettoyer les fichiers de compilation :
 
@@ -53,7 +53,7 @@ make clean      # Supprime les fichiers objets et le binaire
 make mrproper   # Supprime également le répertoire obj
 ```
 
-### Vérification du binaire
+### ✅ Vérification du binaire
 
 Avant le déploiement, vérifiez que le binaire est bien compilé pour ARM :
 
@@ -65,33 +65,33 @@ Vous devriez voir quelque chose comme : `pauline: ELF 32-bit LSB executable, ARM
 
 ---
 
-## Modification de la page web
+## 🌐 Modification de la page web
 
-### Localisation des fichiers web
+### 📁 Localisation des fichiers web
 
 Les fichiers web se trouvent dans :
 ```
 Linux_Pauline/targets/Pauline_RevA_de10-nano/config/rootfs_cfg/www/
 ```
 
-### Structure des fichiers
+### 📂 Structure des fichiers
 
 Les fichiers principaux sont organisés de manière modulaire :
 
-**Fichiers JavaScript** :
+**📜 Fichiers JavaScript** :
 - `pauline.js` - Logique JavaScript principale (communication WebSocket, commandes)
 - `profile.js` - Gestion des profils utilisateurs et thèmes
 - `drives-script.js` - Gestion complète du fichier drives.script (génération, parsing, upload, sauvegarde)
 - `config.js` - Fonctions spécifiques à la page config.html (interface, onglets, sections)
 
-**Fichiers HTML** :
+**📄 Fichiers HTML** :
 - `index.html` - Page d'accueil
 - `status.html` - Page de statut
 - `config.html` - Page de configuration (profils, thèmes, drives.script)
 - `dump.html` - Interface de dump de disquettes
 - `simulator.html` - Simulateur de lecteurs de disquettes avec drag & drop
 
-**Fichiers de style** :
+**🎨 Fichiers de style** :
 - `style.css` - Styles CSS avec support thème clair/sombre
 
 **Note** : Le JavaScript a été externalisé pour améliorer la performance et la maintenabilité. Les fichiers sont chargés dans l'ordre suivant :
@@ -100,7 +100,7 @@ Les fichiers principaux sont organisés de manière modulaire :
 3. `drives-script.js` (fonctions drives.script)
 4. `config.js` (utilise les fonctions de drives-script.js)
 
-### Édition des fichiers
+### ✏️ Édition des fichiers
 
 1. **Modifier un fichier localement** :
    ```bash
@@ -112,27 +112,59 @@ Les fichiers principaux sont organisés de manière modulaire :
    - Utilisez `compare_www.sh` pour comparer avec la version sur la DE10-nano
    - Utilisez `deploy_www.sh` pour déployer les modifications
 
-### Interface web (2025)
+### 🎨 Interface web (2025)
 
 L'interface web a été modernisée avec les fonctionnalités suivantes :
 
-#### Profils utilisateurs
+#### 📸 Captures d'écran de l'interface
+
+> **Note** : Les captures d'écran suivantes illustrent les différentes pages et fonctionnalités de l'interface web.
+
+##### Page d'accueil (index.html)
+![Page d'accueil](screenshots/index.png)
+*Vue d'ensemble des services et console de commandes*
+
+##### Page de configuration (config.html)
+![Page de configuration](screenshots/config.png)
+*Interface de configuration avec sélection de profil, thème et gestion du drives.script*
+
+##### Console de configuration drives.script
+![Console de configuration](screenshots/config_console.png)
+*Console interactive avec cases à cocher et menus déroulants pour configurer drives.script*
+
+##### Importation de fichier drives.script
+![Importation de fichier](screenshots/config_import.png)
+*Zone de drag & drop pour importer un fichier drives.script*
+
+##### Page de dump (dump.html)
+![Page de dump](screenshots/dump.png)
+*Interface de dump de disquettes avec visualisation en temps réel*
+
+##### Simulateur de lecteurs (simulator.html)
+![Simulateur de lecteurs](screenshots/simulator.png)
+*Interface du simulateur avec drag & drop pour charger des images de disquettes*
+
+##### Thème sombre
+![Thème sombre](screenshots/dark.png)
+*Interface en thème sombre pour un meilleur confort visuel*
+
+#### 👤 Profils utilisateurs
 - **Profil Standard** : Interface de dump classique
 - **Profil Archiviste** : Interface avec fonctionnalités supplémentaires
   - Champ "Comments" obligatoire pour les dumps
   - Validation automatique avant lancement
 
-#### Thème d'affichage
+#### 🎨 Thème d'affichage
 - **Thème Clair** : Interface par défaut (fond blanc)
 - **Thème Sombre** : Interface avec fond sombre pour un meilleur confort visuel
 - Le thème choisi s'applique à tous les onglets
 - Préférence sauvegardée dans le navigateur (localStorage)
 
-#### Gestion du fichier drives.script
+#### ⚙️ Gestion du fichier drives.script
 
 La gestion du fichier `drives.script` a été complètement repensée avec une **console interactive** offrant deux méthodes de configuration :
 
-##### Affichage des informations de connexion
+##### 📡 Affichage des informations de connexion
 
 La page de configuration affiche automatiquement :
 - **Adresse IP de la DE10** : Détectée automatiquement depuis le navigateur
@@ -142,7 +174,7 @@ La page de configuration affiche automatiquement :
 
 Les boutons de copie permettent de copier rapidement les chemins Samba dans le presse-papier.
 
-##### Méthode 1 : Console de configuration
+##### 🖥️ Méthode 1 : Console de configuration
 
 Interface interactive avec cases à cocher et menus déroulants pour configurer toutes les options du fichier `drives.script` :
 
@@ -176,7 +208,7 @@ Interface interactive avec cases à cocher et menus déroulants pour configurer 
 - Toggles style mobile pour activer/désactiver chaque drive
 - Désactivation automatique des champs pour les drives désactivés
 
-##### Méthode 2 : Importation de fichier
+##### 📥 Méthode 2 : Importation de fichier
 
 Importation d'un fichier `drives.script` existant :
 - **Bouton d'upload** : Sélectionner un fichier `.script`
@@ -184,30 +216,30 @@ Importation d'un fichier `drives.script` existant :
 - **Analyse automatique** : Le fichier est analysé et la console est automatiquement mise à jour avec les valeurs trouvées
 - **Détection des drives** : Les drives non présents dans le fichier sont automatiquement désactivés
 
-##### Fonctions disponibles
+##### 🔧 Fonctions disponibles
 
-1. **Load from server** (`Load from server`)
+1. **📥 Load from server** (`Load from server`)
    - Charge le contenu actuel du fichier `drives.script` depuis la DE10-nano
    - Analyse automatique et mise à jour de la console
    - Message de prévention avant chargement
    - Chargement automatique au chargement de la page
 
-2. **Generate drives.script** (`Generate drives.script`)
+2. **⚙️ Generate drives.script** (`Generate drives.script`)
    - Génère le fichier `drives.script` à partir des options configurées dans la console
    - Met à jour l'aperçu et la zone de texte
 
-3. **Save to server** (`Save to server`)
+3. **💾 Save to server** (`Save to server`)
    - Sauvegarde le contenu vers `/home/pauline/Settings/drives.script`
    - Utilise le contenu généré depuis la console si l'onglet console est actif
    - Demande confirmation avant d'écraser le fichier existant
 
-4. **Reload configuration** (`Reload configuration`)
+4. **🔄 Reload configuration** (`Reload configuration`)
    - Recharge le fichier `drives.script` et applique les changements
    - Réinitialise la FPGA avec la nouvelle configuration
    - Message de prévention avant rechargement
    - Équivalent à la commande `reload_config`
 
-5. **Reboot** (`Reboot`)
+5. **🔄 Reboot** (`Reboot`)
    - Redémarre la carte DE10-nano
    - Demande confirmation avec message de prévention
    - Interrompt toutes les opérations en cours
@@ -244,7 +276,7 @@ Importation d'un fichier `drives.script` existant :
 - Configuration complète des options de simulation
 - Gestion des LEDs
 
-#### Améliorations visuelles
+#### ✨ Améliorations visuelles
 - Interface modernisée avec bordures arrondies
 - Transitions et effets de survol
 - Cards pour organiser le contenu
@@ -255,7 +287,7 @@ Importation d'un fichier `drives.script` existant :
 - Design responsive
 - Support complet du thème sombre avec bordures discrètes
 
-### Bonnes pratiques
+### 💡 Bonnes pratiques
 
 - Toujours faire une sauvegarde avant de modifier
 - Tester localement si possible
@@ -266,11 +298,11 @@ Importation d'un fichier `drives.script` existant :
 
 ---
 
-## Scripts de déploiement et gestion
+## 📜 Scripts de déploiement et gestion
 
 Tous les scripts se trouvent dans `Softwares_Pauline/Pauline_control/`.
 
-### Configuration commune
+### ⚙️ Configuration commune
 
 **Important** : Avant d'utiliser les scripts, modifiez le mot de passe SSH dans chaque script :
 ```bash
@@ -282,17 +314,17 @@ Les scripts utilisent par défaut :
 - Utilisateur : `root`
 - Répertoire cible : `/usr/sbin/pauline` (binaire) ou `/www` (fichiers web)
 
-### deploy.sh - Déploiement du binaire
+### 🚀 deploy.sh - Déploiement du binaire
 
 Déploie le binaire `pauline` compilé vers la DE10-nano.
 
-#### Usage
+#### 📖 Usage
 
 ```bash
 ./deploy.sh [IP_ADDRESS]
 ```
 
-#### Exemple
+#### 💡 Exemple
 
 ```bash
 # Utilise l'IP par défaut (192.168.1.28)
@@ -302,7 +334,7 @@ Déploie le binaire `pauline` compilé vers la DE10-nano.
 ./deploy.sh 192.168.1.29
 ```
 
-#### Fonctionnalités
+#### ✨ Fonctionnalités
 
 - ✅ Vérifie que le binaire local existe et est compilé pour ARM
 - ✅ Vérifie la connexion SSH
@@ -322,23 +354,23 @@ pauline.backup.YYYYMMDD_HHMMSS
 
 ---
 
-### deploy_www.sh - Déploiement des fichiers web
+### 🌐 deploy_www.sh - Déploiement des fichiers web
 
 Déploie les fichiers HTML/JS/CSS vers le répertoire `/www` sur la DE10-nano.
 
-#### Usage
+#### 📖 Usage
 
 ```bash
 ./deploy_www.sh [IP_ADDRESS]
 ```
 
-#### Exemple
+#### 💡 Exemple
 
 ```bash
 ./deploy_www.sh
 ```
 
-#### Fichiers déployés
+#### 📦 Fichiers déployés
 
 Par défaut, les fichiers suivants sont déployés (liste complète de la nouvelle interface) :
 - `profile.js` - Gestion des profils et thèmes
@@ -354,7 +386,7 @@ Par défaut, les fichiers suivants sont déployés (liste complète de la nouvel
 
 **Note** : Tous les fichiers nécessaires à la nouvelle interface sont inclus par défaut. Si vous modifiez la liste, assurez-vous d'inclure tous les fichiers JavaScript car ils ont des dépendances entre eux.
 
-#### Fonctionnalités
+#### ✨ Fonctionnalités
 
 - ✅ Vérifie le répertoire www local
 - ✅ Vérifie la connexion SSH
@@ -363,7 +395,7 @@ Par défaut, les fichiers suivants sont déployés (liste complète de la nouvel
 - ✅ Transfère les fichiers via SSH (méthode base64)
 - ✅ Affiche un résumé avec les fichiers copiés
 
-#### Sauvegarde
+#### 💾 Sauvegarde
 
 Chaque fichier existant est sauvegardé avec le format :
 ```
@@ -386,17 +418,17 @@ Après le déploiement, vous devrez peut-être vider le cache du navigateur (Ctr
 
 ---
 
-### restore.sh - Restauration d'une sauvegarde
+### 🔄 restore.sh - Restauration d'une sauvegarde
 
 Restaure un binaire `pauline` depuis une sauvegarde précédente.
 
-#### Usage
+#### 📖 Usage
 
 ```bash
 ./restore.sh [IP_ADDRESS] [BACKUP_FILE]
 ```
 
-#### Exemples
+#### 💡 Exemples
 
 ```bash
 # Liste les sauvegardes et restaure la plus récente
@@ -406,7 +438,7 @@ Restaure un binaire `pauline` depuis une sauvegarde précédente.
 ./restore.sh 192.168.1.28 /home/pauline/backups/pauline.backup.20231214_143022
 ```
 
-#### Fonctionnalités
+#### ✨ Fonctionnalités
 
 - ✅ Liste les 10 sauvegardes les plus récentes
 - ✅ Affiche la taille et l'horodatage de chaque sauvegarde
@@ -426,23 +458,23 @@ pauline.current.YYYYMMDD_HHMMSS
 
 ---
 
-### retrieve_www.sh - Récupération des fichiers web
+### 📥 retrieve_www.sh - Récupération des fichiers web
 
 Récupère les fichiers web depuis la DE10-nano vers le projet local.
 
-#### Usage
+#### 📖 Usage
 
 ```bash
 ./retrieve_www.sh [IP_ADDRESS]
 ```
 
-#### Exemple
+#### 💡 Exemple
 
 ```bash
 ./retrieve_www.sh
 ```
 
-#### Fonctionnalités
+#### ✨ Fonctionnalités
 
 - ✅ Liste tous les fichiers HTML/JS/CSS sur la DE10-nano
 - ✅ Crée des sauvegardes sur la DE10-nano et localement
@@ -462,17 +494,17 @@ Récupère les fichiers web depuis la DE10-nano vers le projet local.
 
 ---
 
-### compare_www.sh - Comparaison des fichiers web
+### 🔍 compare_www.sh - Comparaison des fichiers web
 
 Compare un fichier web local avec celui sur la DE10-nano.
 
-#### Usage
+#### 📖 Usage
 
 ```bash
 ./compare_www.sh [FICHIER] [IP_ADDRESS]
 ```
 
-#### Exemples
+#### 💡 Exemples
 
 ```bash
 # Comparer pauline.js (par défaut)
@@ -485,7 +517,7 @@ Compare un fichier web local avec celui sur la DE10-nano.
 ./compare_www.sh pauline.js 192.168.1.29
 ```
 
-#### Fonctionnalités
+#### ✨ Fonctionnalités
 
 - ✅ Compare la taille des fichiers
 - ✅ Compare les hash MD5
@@ -499,9 +531,9 @@ Compare un fichier web local avec celui sur la DE10-nano.
 
 ---
 
-## Workflow complet
+## 🔄 Workflow complet
 
-### Scénario 1 : Déploiement d'une nouvelle version
+### 📦 Scénario 1 : Déploiement d'une nouvelle version
 
 ```bash
 # 1. Compiler le binaire
@@ -516,7 +548,7 @@ make CC=arm-linux-gnueabihf-gcc
 ./deploy_www.sh
 ```
 
-### Scénario 2 : Modification de la page web
+### ✏️ Scénario 2 : Modification de la page web
 
 ```bash
 # 1. Modifier le fichier localement
@@ -531,7 +563,7 @@ nano ../../Linux_Pauline/targets/Pauline_RevA_de10-nano/config/rootfs_cfg/www/co
 # 4. Vider le cache du navigateur (Ctrl+F5) et tester
 ```
 
-### Scénario 3 : Récupération des modifications distantes
+### 📥 Scénario 3 : Récupération des modifications distantes
 
 ```bash
 # 1. Récupérer les fichiers depuis la DE10-nano
@@ -541,7 +573,7 @@ nano ../../Linux_Pauline/targets/Pauline_RevA_de10-nano/config/rootfs_cfg/www/co
 # 3. Vous pouvez les commiter dans Git si nécessaire
 ```
 
-### Scénario 4 : Restauration après problème
+### 🔄 Scénario 4 : Restauration après problème
 
 ```bash
 # 1. Lister les sauvegardes disponibles
@@ -553,9 +585,9 @@ nano ../../Linux_Pauline/targets/Pauline_RevA_de10-nano/config/rootfs_cfg/www/co
 
 ---
 
-## Dépannage
+## 🔧 Dépannage
 
-### Problème : Connexion SSH échoue
+### ❌ Problème : Connexion SSH échoue
 
 **Solutions** :
 - Vérifiez que la DE10-nano est allumée et connectée au réseau
@@ -563,14 +595,14 @@ nano ../../Linux_Pauline/targets/Pauline_RevA_de10-nano/config/rootfs_cfg/www/co
 - Vérifiez que SSH est activé sur la DE10-nano
 - Vérifiez le mot de passe dans les scripts
 
-### Problème : Le binaire ne s'exécute pas
+### ❌ Problème : Le binaire ne s'exécute pas
 
 **Solutions** :
 - Vérifiez que le binaire est compilé pour ARM : `file pauline`
 - Vérifiez les permissions : `chmod +x pauline`
 - Utilisez `diagnose.sh` pour un diagnostic complet
 
-### Problème : Les fichiers web ne se mettent pas à jour
+### ❌ Problème : Les fichiers web ne se mettent pas à jour
 
 **Solutions** :
 - Videz le cache du navigateur (Ctrl+F5 ou Ctrl+Shift+R)
@@ -578,7 +610,7 @@ nano ../../Linux_Pauline/targets/Pauline_RevA_de10-nano/config/rootfs_cfg/www/co
 - Vérifiez les permissions du répertoire `/www` sur la DE10-nano
 - Vérifiez que tous les fichiers JavaScript sont déployés (config.js, drives-script.js, etc.)
 
-### Problème : Le système de fichiers est en lecture seule
+### ❌ Problème : Le système de fichiers est en lecture seule
 
 **Solutions** :
 - Les scripts tentent automatiquement de remonter en écriture
@@ -588,14 +620,14 @@ nano ../../Linux_Pauline/targets/Pauline_RevA_de10-nano/config/rootfs_cfg/www/co
   mount -o remount,rw /
   ```
 
-### Problème : sshpass n'est pas installé
+### ❌ Problème : sshpass n'est pas installé
 
 **Solution** :
 ```bash
 sudo apt-get install sshpass
 ```
 
-### Diagnostic complet
+### 🔍 Diagnostic complet
 
 Utilisez le script de diagnostic pour identifier les problèmes :
 
@@ -607,7 +639,7 @@ Ce script génère un fichier de log avec toutes les informations de diagnostic.
 
 ---
 
-## Notes importantes
+## ⚠️ Notes importantes
 
 1. **Sauvegardes automatiques** : Tous les scripts créent des sauvegardes automatiques avant modification
 2. **Système de fichiers** : La DE10-nano peut avoir un système de fichiers en lecture seule par défaut. Les scripts le remontent automatiquement en écriture
@@ -618,7 +650,7 @@ Ce script génère un fichier de log avec toutes les informations de diagnostic.
 
 ---
 
-## Structure des répertoires
+## 📂 Structure des répertoires
 
 ```
 Pauline/
@@ -653,19 +685,19 @@ Pauline/
 
 ---
 
-## Fonctionnalités de l'interface web
+## 🎨 Fonctionnalités de l'interface web
 
-### Pages disponibles
+### 📄 Pages disponibles
 
-1. **index.html** - Page d'accueil
+1. **🏠 index.html** - Page d'accueil
    - Vue d'ensemble des services
    - Console de commandes
 
-2. **status.html** - Page de statut
+2. **📊 status.html** - Page de statut
    - Informations système
    - Console de commandes
 
-3. **config.html** - Configuration
+3. **⚙️ config.html** - Configuration
    - Sélection du profil utilisateur (Standard/Archiviste)
    - Sélection du thème (Clair/Sombre)
    - **Affichage de l'adresse IP de la DE10**
@@ -683,7 +715,7 @@ Pauline/
    - **Services disponibles** (HTTP, SSH, FTP, Samba)
    - Console de commandes
 
-4. **dump.html** - Dump de disquettes
+4. **💾 dump.html** - Dump de disquettes
    - Identification de la disquette
    - Sélection du lecteur
    - Contrôle du lecteur
@@ -693,7 +725,7 @@ Pauline/
    - Visualisation en temps réel avec décodeurs
    - **Mode Archiviste** : Validation obligatoire du champ "Comments"
 
-5. **simulator.html** - Simulateur de lecteurs
+5. **🎮 simulator.html** - Simulateur de lecteurs
    - Glisser-déposer de fichiers image (drag & drop)
    - **Conversion automatique** des formats d'image vers HXC_STREAMHFE
    - Profils de simulation pré-configurés
@@ -704,14 +736,14 @@ Pauline/
    - **Configuration automatique complète** lors du chargement d'une image
    - Contrôles (Démarrer/Arrêter/Éjecter)
 
-### Utilisation des profils
+### 👤 Utilisation des profils
 
-#### Profil Standard
+#### 👤 Profil Standard
 - Interface classique de dump
 - Tous les champs sont optionnels
 - Fonctionnalités de base
 
-#### Profil Archiviste
+#### 📚 Profil Archiviste
 - Interface avec fonctionnalités supplémentaires
 - Champ "Comments" obligatoire
 - Validation automatique avant lancement d'un dump
@@ -722,7 +754,7 @@ Pour changer de profil :
 2. Sélectionner le profil dans le menu déroulant
 3. Le changement est immédiat et persiste dans le navigateur
 
-### Utilisation du thème sombre
+### 🌙 Utilisation du thème sombre
 
 Pour activer le thème sombre :
 1. Aller dans l'onglet "Configuration"
@@ -732,11 +764,11 @@ Pour activer le thème sombre :
 
 **Note** : Le thème est stocké dans le localStorage du navigateur, il persiste entre les sessions.
 
-### Utilisation du simulateur de lecteurs
+### 🎮 Utilisation du simulateur de lecteurs
 
 Le simulateur permet de charger des images de disquettes et de les utiliser avec un système cible (PC, Amiga, etc.).
 
-#### Formats d'image supportés
+#### 📦 Formats d'image supportés
 
 Le simulateur accepte les formats suivants, qui sont **automatiquement convertis** vers HXC_STREAMHFE si nécessaire :
 
@@ -751,7 +783,7 @@ Le simulateur accepte les formats suivants, qui sont **automatiquement convertis
 
 **Note** : Les fichiers doivent être uploadés vers `/home/pauline/Drives_Simulation/` sur la DE10-nano via Samba/FTP avant d'être chargés.
 
-#### Configuration automatique
+#### ⚙️ Configuration automatique
 
 Lors du chargement d'une image, le simulateur configure automatiquement :
 
@@ -774,7 +806,7 @@ Lors du chargement d'une image, le simulateur configure automatiquement :
 9. **Chargement de l'image** avec conversion automatique si nécessaire
 10. **Activation du lecteur**
 
-#### Profils de simulation
+#### 🎯 Profils de simulation
 
 - **Custom** : Configuration manuelle complète
 - **PC Drive** : Configuration pour lecteur PC standard
@@ -782,7 +814,7 @@ Lors du chargement d'une image, le simulateur configure automatiquement :
 - **SD Mode** : Mode Single Density
 - **HD Mode** : Mode High Density
 
-#### Options de configuration
+#### ⚙️ Options de configuration
 
 - **Drive number** : 0, 1, 2 ou 3
 - **Drive type** : PC ou Shugart
@@ -793,29 +825,29 @@ Lors du chargement d'une image, le simulateur configure automatiquement :
 - **LED Activity** : None, Read, Write, Both
 - **LED Status** : None, Ready, Error, Both
 
-#### Utilisation
+#### 📖 Utilisation
 
-1. **Préparer le fichier** :
+1. **📁 Préparer le fichier** :
    - Uploader le fichier image vers `/home/pauline/Drives_Simulation/` via Samba/FTP
    - Chemin Samba : `\\192.168.1.28\pauline\Drives_Simulation\` (Windows)
    - Chemin Samba : `smb://192.168.1.28/pauline/Drives_Simulation/` (Linux/macOS)
 
-2. **Configurer les options** :
+2. **⚙️ Configurer les options** :
    - Sélectionner le drive
    - Choisir le type et la densité
    - Configurer les options de simulation
    - Configurer les LEDs
 
-3. **Charger l'image** :
+3. **📥 Charger l'image** :
    - Glisser-déposer le fichier dans la zone de drop
    - Ou cliquer pour sélectionner le fichier
    - Le système configure automatiquement tout et charge l'image
 
-4. **Démarrer la simulation** :
+4. **▶️ Démarrer la simulation** :
    - Cliquer sur "Start simulation" pour activer le lecteur
    - Le lecteur est maintenant prêt à être utilisé par le système cible
 
-#### Commandes disponibles via la console
+#### ⌨️ Commandes disponibles via la console
 
 - `load <drive> <filename> [doublestep]` - Charge une image avec conversion automatique
 - `enable_drive <drive> [enable]` - Active/désactive un lecteur
@@ -829,9 +861,9 @@ Lors du chargement d'une image, le simulateur configure automatiquement :
 
 ---
 
-## Commandes disponibles
+## ⌨️ Commandes disponibles
 
-### Commandes de chargement d'image
+### 📥 Commandes de chargement d'image
 
 #### `load <drive> <filename> [doublestep]`
 
@@ -865,7 +897,7 @@ loadimage 0 "/home/pauline/Drives_Simulation/disk3.img"
 - `.scp` (SuperCard Pro)
 - Et autres formats supportés par libhxcfe
 
-### Commandes de gestion des lecteurs
+### 💾 Commandes de gestion des lecteurs
 
 #### `enable_drive <drive> [enable]`
 
@@ -958,7 +990,7 @@ Active ou désactive la protection en écriture.
 fe_writeprotect 0 1
 ```
 
-### Commandes de configuration des LEDs
+### 💡 Commandes de configuration des LEDs
 
 #### `ledsrc <led> <source>`
 
@@ -974,7 +1006,7 @@ ledsrc 0 18  # LED Activity = READ Drive 0
 ledsrc 1 24  # LED Status = Host write gate input
 ```
 
-### Commandes système
+### 🔧 Commandes système
 
 #### `reload_config` ou `reloadcfg`
 
@@ -1005,8 +1037,8 @@ ejectdisk 0
 
 ---
 
-**Documentation mise à jour le** : 2025
-**Version** : 3.0
+**📅 Documentation mise à jour le** : 2025  
+**🔢 Version** : 3.0
 
 **Nouvelles fonctionnalités dans cette version** :
 - Console interactive de configuration pour drives.script avec cases à cocher et menus déroulants
