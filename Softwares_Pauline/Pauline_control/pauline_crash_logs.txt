@@ -1,0 +1,69 @@
+
+-----------------------
+Error: signal 11:
+/usr/sbin/pauline(sig_handler+0x18)[0x31c34]
+//lib/libc.so.6(__default_sa_restorer+0x0)[0xb6e1dde0]
+
+-----------------------
+Error: signal 11:
+/usr/sbin/pauline(sig_handler+0x18)[0x33bec]
+//lib/libc.so.6(__default_sa_restorer+0x0)[0xb6e771e0]
+/usr/sbin/pauline(std_crc32+0x14)[0x30b04]
+
+-----------------------
+Error: signal 11:
+/usr/sbin/pauline(sig_handler+0x18)[0x2d2e8]
+/lib/libc.so.6(__default_sa_restorer+0x0)[0xb6df94d0]
+
+-----------------------
+Error: signal 11:
+/usr/sbin/pauline(sig_handler+0x18)[0x2d2e8]
+/lib/libc.so.6(__default_sa_restorer+0x0)[0xb6d894d0]
+/usr/sbin/pauline(tcp_listener+0x3ac)[0x2cec8]
+
+-----------------------
+Error: signal 11:
+/usr/sbin/pauline(sig_handler+0x18)[0x2d2e8]
+/lib/libc.so.6(__default_sa_restorer+0x0)[0xb6e194d0]
+/usr/sbin/pauline(tcp_listener+0x3ac)[0x2cec8]
+
+-----------------------
+Error: signal 11:
+/usr/sbin/pauline(sig_handler+0x18)[0x2d2e8]
+/lib/libc.so.6(__default_sa_restorer+0x0)[0xb6e094d0]
+/usr/sbin/pauline(tcp_listener+0x3ac)[0x2cec8]
+
+-----------------------
+Error: signal 11:
+/usr/sbin/pauline(sig_handler+0x18)[0x2d2e8]
+/lib/libc.so.6(__default_sa_restorer+0x0)[0xb6de94d0]
+/usr/sbin/pauline(tcp_listener+0x3ac)[0x2cec8]
+
+-----------------------
+Error: signal 11:
+/usr/sbin/pauline(sig_handler+0x18)[0x2d2e8]
+/lib/libc.so.6(__default_sa_restorer+0x0)[0xb6e394d0]
+/usr/sbin/pauline(tcp_listener+0x3ac)[0x2cec8]
+
+-----------------------
+Error: signal 11:
+/usr/sbin/pauline(sig_handler+0x18)[0x2d2e8]
+/lib/libc.so.6(__default_sa_restorer+0x0)[0xb6de94d0]
+/usr/sbin/pauline(tcp_listener+0x3ac)[0x2cec8]
+
+-----------------------
+Error: signal 11:
+/usr/sbin/pauline(sig_handler+0x18)[0x2d2e8]
+/lib/libc.so.6(__default_sa_restorer+0x0)[0xb6d994d0]
+/usr/sbin/pauline(tcp_listener+0x3ac)[0x2cec8]
+
+-----------------------
+Error: signal 11:
+/usr/sbin/pauline(sig_handler+0x18)[0x2d2e8]
+/lib/libc.so.6(__default_sa_restorer+0x0)[0xb6e094d0]
+/usr/sbin/pauline(tcp_listener+0x3ac)[0x2cec8]
+
+-----------------------
+Error: signal 11:
+/usr/sbin/pauline(sig_handler+0x11)[0x4bd226]
+/lib/libc.so.6(__default_sa_restorer+0x0)[0xb6e094d0]
