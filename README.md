@@ -22,4 +22,4 @@
 
 :construction: Still WORK IN PROGRESS :construction:
 
-[New Gui Pauline here](https://github.com/Jean-Fred64/Pauline_FDC/blob/main/Softwares_Pauline/Pauline_control/DOCUMENTATION.md#modification-de-la-page-web) # Version : GPS 🇯🇵 # Mr JeAn-FReD 🇫🇷
+[New Gui Pauline here](Softwares_Pauline/Pauline_control/DOCUMENTATION.md) # Version : GPS 🇯🇵 # Mr JeAn-FReD 🇫🇷
