@@ -1037,7 +1037,7 @@ ejectdisk 0
 
 ---
 
-**📅 Documentation mise à jour le** : 2025  
+**📅 Documentation mise à jour le** : 15/12/2025  
 **🔢 Version** : 3.0
 
 **Nouvelles fonctionnalités dans cette version** :
