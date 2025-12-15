@@ -2,9 +2,12 @@
 
 ## Ressources for new GUI
 
-**WIP** 
+
 
 *STOP 06/02/2021*  
+
+[use this version](Linux_Pauline/targets/Pauline_RevA_de10-nano/config/rootfs_cfg/www)
+:construction: Still WORK IN PROGRESS :construction:  
   
 ![FR](https://raw.githubusercontent.com/stevenrskelton/flag-icon/master/png/16/country-4x3/fr.png)  [Documentation Pauline FR](https://wernli.pages.in2p3.fr/pauline-doc/fr/)  
   
