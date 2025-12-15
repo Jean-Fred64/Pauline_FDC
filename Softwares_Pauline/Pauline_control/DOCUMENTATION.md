@@ -15,7 +15,7 @@
 
 ---
 
-## 🔨 Compilation du projet Pauline
+<h2 id="compilation-du-projet-pauline">🔨 Compilation du projet Pauline</h2>
 
 ### 📋 Prérequis
 
@@ -65,7 +65,7 @@ Vous devriez voir quelque chose comme : `pauline: ELF 32-bit LSB executable, ARM
 
 ---
 
-## 🌐 Modification de la page web
+<h2 id="modification-de-la-page-web">🌐 Modification de la page web</h2>
 
 ### 📁 Localisation des fichiers web
 
@@ -298,7 +298,7 @@ Importation d'un fichier `drives.script` existant :
 
 ---
 
-## 📜 Scripts de déploiement et gestion
+<h2 id="scripts-de-déploiement-et-gestion">📜 Scripts de déploiement et gestion</h2>
 
 Tous les scripts se trouvent dans `Softwares_Pauline/Pauline_control/`.
 
@@ -314,7 +314,7 @@ Les scripts utilisent par défaut :
 - Utilisateur : `root`
 - Répertoire cible : `/usr/sbin/pauline` (binaire) ou `/www` (fichiers web)
 
-### 🚀 deploy.sh - Déploiement du binaire
+<h3 id="deploysh---déploiement-du-binaire">🚀 deploy.sh - Déploiement du binaire</h3>
 
 Déploie le binaire `pauline` compilé vers la DE10-nano.
 
@@ -354,7 +354,7 @@ pauline.backup.YYYYMMDD_HHMMSS
 
 ---
 
-### 🌐 deploy_www.sh - Déploiement des fichiers web
+<h3 id="deploy_wwwsh---déploiement-des-fichiers-web">🌐 deploy_www.sh - Déploiement des fichiers web</h3>
 
 Déploie les fichiers HTML/JS/CSS vers le répertoire `/www` sur la DE10-nano.
 
@@ -418,7 +418,7 @@ Après le déploiement, vous devrez peut-être vider le cache du navigateur (Ctr
 
 ---
 
-### 🔄 restore.sh - Restauration d'une sauvegarde
+<h3 id="restoresh---restauration-dune-sauvegarde">🔄 restore.sh - Restauration d'une sauvegarde</h3>
 
 Restaure un binaire `pauline` depuis une sauvegarde précédente.
 
@@ -458,7 +458,7 @@ pauline.current.YYYYMMDD_HHMMSS
 
 ---
 
-### 📥 retrieve_www.sh - Récupération des fichiers web
+<h3 id="retrieve_wwwsh---récupération-des-fichiers-web">📥 retrieve_www.sh - Récupération des fichiers web</h3>
 
 Récupère les fichiers web depuis la DE10-nano vers le projet local.
 
@@ -494,7 +494,7 @@ Récupère les fichiers web depuis la DE10-nano vers le projet local.
 
 ---
 
-### 🔍 compare_www.sh - Comparaison des fichiers web
+<h3 id="compare_wwwsh---comparaison-des-fichiers-web">🔍 compare_www.sh - Comparaison des fichiers web</h3>
 
 Compare un fichier web local avec celui sur la DE10-nano.
 
@@ -531,7 +531,7 @@ Compare un fichier web local avec celui sur la DE10-nano.
 
 ---
 
-## 🔄 Workflow complet
+<h2 id="workflow-complet">🔄 Workflow complet</h2>
 
 ### 📦 Scénario 1 : Déploiement d'une nouvelle version
 
@@ -585,7 +585,7 @@ nano ../../Linux_Pauline/targets/Pauline_RevA_de10-nano/config/rootfs_cfg/www/co
 
 ---
 
-## 🔧 Dépannage
+<h2 id="dépannage">🔧 Dépannage</h2>
 
 ### ❌ Problème : Connexion SSH échoue
 
